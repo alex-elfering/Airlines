@@ -1,4 +1,5 @@
 # create a data visualization that shows how a country's airports have recovered from the outset of the COVID-19 pandemic
+# using movements from network manager 
 # #TidyTuesday 2022 Week 28
 # code by alex elfering
 
@@ -12,10 +13,15 @@ library(ggpattern)
 tuesdata <- tidytuesdayR::tt_load('2022-07-12')
 tuesdata <- tidytuesdayR::tt_load(2022, week = 28)
 
+# identify the country airports 
+
+country_var <- 'France'
+
 airports <- flights %>%
-  filter(STATE_NAME == 'Italy') %>%
+  filter(STATE_NAME == country_var) %>%
   distinct(APT_ICAO)
 
+# clean the data and prepare to compare movements to 2019
 flt_data <- flights %>%
   select(country = STATE_NAME,
          airport = APT_NAME,
@@ -28,6 +34,7 @@ flt_data <- flights %>%
          month = as.numeric(month)) %>%
   group_by(airport,
            icao) %>%
+  # some airports didn't log any flights
   complete(date = seq.Date(as.Date('2016-01-01'), as.Date('2022-05-31'), by = 'day')) %>%
   mutate(month = month(date),
          year = year(date),
@@ -80,6 +87,7 @@ flt_yoy <- flt_data %>%
   filter(icao != 'LICJ') %>%
   mutate(year = as.numeric(substr(year, 3, 4)))
 
+# order the airports in the visualization by who has recovered the most
 airport_order <- flt_yoy %>%
   filter(month_year == max(month_year)) %>%
   arrange(desc(yoy)) %>%
@@ -88,6 +96,7 @@ airport_order <- flt_yoy %>%
 flt_order <- flt_yoy %>%
   mutate(airport = factor(airport, levels = airport_order$airport))
 
+# visualization
 fl_plot <- flt_order %>%
   ggplot() + 
   geom_tile(mapping = aes(x = factor(month),
