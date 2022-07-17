@@ -75,7 +75,7 @@ flt_yoy <- flt_data %>%
                                TRUE ~ group_yoy),
          airport = ifelse(icao == 'LIML', paste0('*', airport), airport)) %>%
   #filter(icao == 'LIML')
-  mutate(group_yoy = factor(group_yoy, levels = c('No flights',
+  mutate(group_yoy = factor(group_yoy, levels = c('No flights/No results',
                                                   '0-25%',
                                                   '25-50%',
                                                   '50-75%',
@@ -165,7 +165,7 @@ fl_plot <- flt_order %>%
         panel.grid.major.x = element_blank()
         ) 
 
-ggsave('fl_plot.png',
+ggsave('Italian Airports.png',
        fl_plot,
        width = 8,
        height = 10,
