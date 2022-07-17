@@ -142,7 +142,7 @@ fl_plot <- flt_order %>%
        fill = 'Legend:',
        x = '',
        y = '',
-       caption = 'Source: Eurocontrol | Total IFR movements from Network Manager was utilized\nData Visualization by Alex Elfering | Tidy Tuesday 2022 Week #28\n*Milan-Linate was closed from 27-July to 27-October for runway resurfacing and other upgrades, impacting movements') +
+       caption = 'Source: Eurocontrol | Total IFR movements from Network Manager was utilized\nData Visualization by Alex Elfering | Tidy Tuesday 2022 Week #28\n*Milan-Linate was closed from 2019-07-27 to 2019-10-27 for runway resurfacing and other upgrades, impacting movements') +
   theme(plot.title = element_text(face = 'bold', size = 24),
         plot.subtitle = element_text(size = 16),
         legend.position = 'top',
