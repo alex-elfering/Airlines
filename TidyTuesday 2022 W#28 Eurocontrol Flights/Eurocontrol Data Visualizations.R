@@ -18,6 +18,8 @@ tuesdata <- tidytuesdayR::tt_load(2022, week = 28)
 
 country_var <- 'Italy'
 
+flights <- tuesdata$flights
+
 airports <- flights %>%
   filter(STATE_NAME == country_var) %>%
   distinct(APT_ICAO)
@@ -165,7 +167,7 @@ fl_plot <- flt_order %>%
         panel.grid.major.x = element_blank()
         ) 
 
-ggsave('Italian Airports.png',
+ggsave('~/GitHub/Airlines/TidyTuesday 2022 W#28 Eurocontrol Flights/Italian Airports.png',
        fl_plot,
        width = 8,
        height = 10,
