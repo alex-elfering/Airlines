@@ -67,7 +67,7 @@ flt_yoy <- flt_data %>%
   mutate(month_year = as.Date(paste(year, month, '1', sep = '-')),
          month_name = substr(month.name[month],1,1),
          group_yoy = as.character((cut(yoy, breaks = cut_yoy))),
-         group_yoy = case_when(yoy == 0 & is.na(group_yoy) ~ 'No flights', 
+         group_yoy = case_when(yoy == 0 & is.na(group_yoy) ~ 'No flights/No results', 
                                yoy > 1 ~ '+100%',
                                group_yoy == '(0,0.25]' ~ '0-25%',
                                group_yoy == '(0.25,0.5]' ~ '25-50%',
@@ -106,7 +106,7 @@ fl_plot <- flt_order %>%
                           fill = group_yoy),
             color = 'white',
             size = 1) +
-  geom_tile_pattern(flt_order %>% filter(group_yoy == 'No flights'),
+  geom_tile_pattern(flt_order %>% filter(group_yoy == 'No flights/No results'),
                     mapping = aes(x = factor(month),
                                   y = year),
                     fill = NA,
@@ -126,7 +126,7 @@ fl_plot <- flt_order %>%
                     pattern_density = 0.1,
                     pattern_spacing = 0.05,
                     pattern_key_scale_factor = 0.5) +
-  scale_fill_manual(values = c('No flights' = 'gray75',
+  scale_fill_manual(values = c('No flights/No results' = 'gray75',
                                '0-25%' = '#d7191c',
                                '25-50%' = '#fdae61',
                                '50-75%' = '#ffffbf',
