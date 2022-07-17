@@ -11,7 +11,6 @@ library(ggpattern)
 library(glue)
 
 # data load
-tuesdata <- tidytuesdayR::tt_load('2022-07-12')
 tuesdata <- tidytuesdayR::tt_load(2022, week = 28)
 
 # identify the country airports 
