@@ -262,4 +262,4 @@ final_map <- ggplot() +
         panel.grid.major.x = ggplot2::element_blank(),
         panel.grid.major.y = ggplot2::element_blank())
 
-ggsave(final_map, file = '~/des moines route map d1b1.png', width = 36, height = 24, units = c('in'))
+ggsave(final_map, file = '~/GitHub/Airlines/Des Moines D1B1 Airline Route Map/des moines route map d1b1.png', width = 21, height = 12, units = c('in'))
