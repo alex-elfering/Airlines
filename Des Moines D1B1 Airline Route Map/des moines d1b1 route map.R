@@ -25,7 +25,7 @@ db1b_DF <- rbindlist(lapply(db1b, fread))
 colnames(on_time_df) <- tolower(colnames(on_time_df))
 colnames(db1b_DF) <- tolower(colnames(db1b_DF))
 
-  # lat and long airport data
+# lat and long airport data
 lat_long <- read.csv('~/airports.csv') %>% filter(grepl('US-', iso_region))
 airport_lat_long <- dplyr::select(lat_long, 14, 5, 6) %>% mutate(iata_code = trim(iata_code)) #%>% filter(iata_code == 'MSP')
 
@@ -175,7 +175,8 @@ final_map <- ggplot() +
                   mapping = aes(x = destin_long,
                                 y = destin_lat,
                                 label = dest),
-                  fontface = 'bold',
+                  size = 3,
+                  #fontface = 'bold',
                   family = 'IBM Plex Sans') +
   geom_curve(one_stop_coord, 
              mapping = aes(x = origin_long, 
@@ -208,35 +209,60 @@ final_map <- ggplot() +
   geom_point(one_stop_coord, 
              mapping = aes(x = first_long, 
                            y = first_lat),
-             color = 'darkorange',
-             size = 10) +
+             color = 'black',
+             size = 4) +
   geom_point(one_stop_coord, 
              mapping = aes(x = origin_long, 
                            y = origin_lat),
-             color = '#de2d26',
-             size = 10) +
+             color = 'darkorange',
+             size = 4) +
   geom_point(one_stop_coord %>% filter(!dest %in% one_stop_labels$first_stop), 
              mapping = aes(x = destin_long, 
                            y = destin_lat),
              color = 'black',
-             size = 4) +
-  geom_text_repel(one_stop_labels,
-                  mapping = aes(x = first_long,
-                                y = first_lat,
-                                label = first_stop),
-                  size = 8,
-                  box.padding = 1,
-                  color = 'darkorange',
-                  fontface = 'bold',
-                  family = 'IBM Plex Sans') +
-  geom_text_repel(mapping = aes(x = 527052.9,
-                                y = -365024.6),
-                  label = 'DSM',
-                  size = 8,
-                  box.padding = 1,
-                  color = '#de2d26',
-                  fontface = 'bold',
-                  family = 'IBM Plex Sans') +
+             size = 1) +
+  geom_label_repel(one_stop_labels,
+                   mapping = aes(x = first_long,
+                                 y = first_lat,
+                                 label = first_stop),
+                   alpha = 0.6, 
+                   label.size = NA,
+                   seed = 999,
+                   size = 5,
+                   color = 'black',
+                   fontface = 'bold',
+                   family = 'IBM Plex Sans') +
+  geom_label_repel(one_stop_labels,
+                   mapping = aes(x = first_long,
+                                 y = first_lat,
+                                 label = first_stop),
+                   label.size = NA,
+                   seed = 999,
+                   size = 5,
+                   fill = NA,
+                   color = 'black',
+                   fontface = 'bold',
+                   family = 'IBM Plex Sans') +
+  geom_label_repel(mapping = aes(x = 527052.9,
+                                 y = -365024.6),
+                   label = 'DSM',
+                   label.size = NA,
+                   seed = 999,
+                   size = 5,
+                   fill = NA,
+                   color = 'black',
+                   fontface = 'bold',
+                   family = 'IBM Plex Sans') +
+  geom_label_repel(mapping = aes(x = 527052.9,
+                                 y = -365024.6),
+                   label = 'DSM',
+                   alpha = 0.6, 
+                   label.size = NA,
+                   seed = 999,
+                   size = 5,
+                   color = 'black',
+                   fontface = 'bold',
+                   family = 'IBM Plex Sans') +
   coord_equal()  +
   labs(x = '', 
        y = '',
