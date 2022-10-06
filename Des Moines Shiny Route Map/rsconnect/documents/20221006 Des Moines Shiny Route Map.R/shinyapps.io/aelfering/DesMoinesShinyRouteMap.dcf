@@ -1,0 +1,13 @@
+name: DesMoinesShinyRouteMap
+title: DesMoinesShinyRouteMap
+username:
+account: aelfering
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 7232872
+bundleId: 6376501
+url: https://aelfering.shinyapps.io/DesMoinesShinyRouteMap/
+when: 1665074536.66005
+lastSyncTime: 1665074536.66005
+asMultiple: FALSE
+asStatic: FALSE

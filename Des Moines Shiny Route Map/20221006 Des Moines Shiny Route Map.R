@@ -3,8 +3,23 @@
 library(shiny)
 library(shinyWidgets)
 library(glue)
+library(tidyverse)
+library(data.table)
+library(tidylog)
+library(albersusa)
+library(sp)
+library(raster)
+library(ggplot2)
+library(broom)
+library(ggrepel)
 
-airline_hubs <- airline_hubs$first_stop
+full_dsm_data <- read.csv("~/full_dsm_data.csv")
+airline_hubs <- read.csv("~/airline_hubs.csv")
+lat_long <- read.csv('~/airports.csv') %>% filter(grepl('US-', iso_region))
+airport_lat_long <- dplyr::select(lat_long, 14, 5, 6) %>% mutate(iata_code = trim(iata_code))
+
+airline_hubs_list <- sort(unique(airline_hubs$first_stop))
+destinations_list <- sort(unique(full_dsm_data$dest))
 
 ####  App ####
 ui <- fluidPage(
@@ -20,13 +35,13 @@ ui <- fluidPage(
                                          multiple = T),
                              pickerInput("locInputhubs",
                                          "Hubs:", 
-                                         choices= sort(unique(airline_hubs)), 
+                                         choices= airline_hubs_list, 
                                          options = list(`actions-box` = TRUE),
                                          selected = c('ORD', 'DEN', 'DFW', 'CLT'),
                                          multiple = T),
                              pickerInput("locInput",
                                          "Destinations:", 
-                                         choices= sort(unique(full_dsm_data$dest)), 
+                                         choices= destinations_list, 
                                          options = list(`actions-box` = TRUE),
                                          selected = c('LAX', 'SFO'),
                                          multiple = T),
@@ -73,7 +88,7 @@ server <- function(input, output, session){
                     pax = trim(pax),
                     connections = trim(connections)) %>%
       filter(ticket_carrier %in% input$locInputAirlines,
-             dest %in% input$locInput | first_stop %in% input$locInputhubs)
+             (dest %in% input$locInput | dest %in% input$locInputhubs) & first_stop %in% input$locInputhubs)
     #filter(ticket_carrier %in% input$airline,
     #       dest %in% input$locInput & first_stop %in% input$locInputhubs)
     
@@ -270,6 +285,7 @@ server <- function(input, output, session){
             legend.key=element_blank(),
             legend.title = element_text(size = 16,
                                         color = 'black',
+                                        face = 'bold',
                                         family = 'Arial'),
             legend.text = element_text(size = 16,
                                        color = 'black',
