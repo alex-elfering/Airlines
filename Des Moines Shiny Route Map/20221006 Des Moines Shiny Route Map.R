@@ -1,5 +1,20 @@
 # dsm shiny app
 
+# load the packages
+list.of.packages <- c('shiny',
+                      'shinyWidgets',
+                      'glue',
+                      'tidyverse',
+                      'data.table',
+                      'tidylog',
+                      'albersusa',
+                      'sp',
+                      'raster',
+                      'ggplot2',
+                      'ggrepel')
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
 library(shiny)
 library(shinyWidgets)
 library(glue)
@@ -12,14 +27,19 @@ library(raster)
 library(ggplot2)
 library(broom)
 library(ggrepel)
+library(BiocManager)
 
-full_dsm_data <- read.csv("~/full_dsm_data.csv")
-airline_hubs <- read.csv("~/airline_hubs.csv")
-lat_long <- read.csv('~/airports.csv') %>% filter(grepl('US-', iso_region))
+options(repos = BiocManager::repositories())
+
+full_dsm_data <- read.csv("full_dsm_data.csv")
+airline_hubs <- read.csv("airline_hubs.csv")
+lat_long <- read.csv('airports.csv') %>% filter(grepl('US-', iso_region))
 airport_lat_long <- dplyr::select(lat_long, 14, 5, 6) %>% mutate(iata_code = trim(iata_code))
 
 airline_hubs_list <- sort(unique(airline_hubs$first_stop))
 destinations_list <- sort(unique(full_dsm_data$dest))
+
+trim <- function (x) gsub("^\\s+|\\s+$", "", x)
 
 ####  App ####
 ui <- fluidPage(
@@ -70,7 +90,6 @@ ui <- fluidPage(
                                         max = 10,
                                         step = 1,
                                         value = 3),
-                  h5("Table created by Alex Elfering"),
                   width=2),
                 mainPanel(plotOutput("plot", width = "100%"))
   )) 
