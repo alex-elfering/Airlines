@@ -107,7 +107,7 @@ server <- function(input, output, session){
                     pax = trim(pax),
                     connections = trim(connections)) %>%
       filter(ticket_carrier %in% input$locInputAirlines,
-             (dest %in% input$locInput | dest %in% input$locInputhubs) & first_stop %in% input$locInputhubs)
+             (dest %in% input$locInput) & first_stop %in% input$locInputhubs)
     #filter(ticket_carrier %in% input$airline,
     #       dest %in% input$locInput & first_stop %in% input$locInputhubs)
     
