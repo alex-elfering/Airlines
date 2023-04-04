@@ -38,4 +38,6 @@ florida_df %>%
                           y = average_capacity,
                           color = origin),
             size = 2) +
+  labs(title = 'Average Outbound Capacity',
+       subtitle = 'Seats divided by departures performed') +
   facet_wrap(~origin)
