@@ -28,6 +28,7 @@ florida_df %>%
          origin %in% c('MIA', 'FLL', 'MCO', 'RSW', 'TPA', 'JAX')) %>%
   inner_join(aircraft, by = c('aircraft_type' = 'code')) %>%
   mutate(average_seats = seats/departures_performed) %>%
+  distinct(description)
   group_by(carrier,
            year,
            origin) %>%
