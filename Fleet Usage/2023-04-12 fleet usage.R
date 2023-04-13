@@ -59,33 +59,46 @@ intl_domestic_seats_fleet <- airline_t2 %>%
                sum,
                na.rm = TRUE) %>%
   ungroup() %>%
-  filter(description %in% c('Aerospatiale/Aeritalia ATR-42', 'Aerospatiale Caravelle SE-210', 'British Aerospace BAe-146-200', 'Canadair (Bombardier) Challlenger 601'))
-
-intl_domestic_airline <- intl_domestic_seats_fleet %>%
-  group_by(year,
-           intl) %>%
-  summarise_if(is.numeric, sum) %>%
-  ungroup() %>%
-  group_by(year) %>%
-  mutate(pct_seat_miles = avl_seat_miles_320/sum(avl_seat_miles_320)) %>%
-  ungroup() %>%
-  select(-aircraft_type)
-
-
-intl_domestic_airline <- intl_domestic_seats_fleet %>%
-  group_by(year,
-           unique_carrier,
-           unique_carrier_name,
-           intl) %>%
-  summarise_if(is.numeric, sum) %>%
-  ungroup() %>%
-  group_by(year,
-           unique_carrier,
-           unique_carrier_name) %>%
-  mutate(pct_seat_miles = avl_seat_miles_320/sum(avl_seat_miles_320)) %>%
-  ungroup() 
+  filter(!description %in% c('Canadair RJ-200ER /RJ-440', 
+                             'Aerospatiale/Aeritalia ATR-42',
+                             'Aerospatiale Caravelle SE-210', 
+                             'British Aerospace BAe-146-200', 
+                             'Canadair (Bombardier) Challlenger 601', 
+                             'Gates Learjet Lear-31/35/36', 
+                             'Gates Learjet Lear-25', 
+                             'Fokker Friendship F-27/Fairchild F-27/A/B/F/J', 
+                             'Fokker F28-4000/6000 Fellowship', 
+                             'Fokker F28-1000 Fellowship', 
+                             'Embraer EMB-120 Brasilia', 
+                             'Dornier 328', 
+                             'Embraer 190', 
+                             'Embraer-Emb-170' )) %>%
+  mutate(twin_aisle = case_when( grepl('A300', description) | 
+                                   grepl('A310', description) | 
+                                   grepl('A330', description) | 
+                                   grepl('A350', description) | 
+                                   grepl('B787', description) | 
+                                   grepl('747', description)| 
+                                   grepl('767', description)| 
+                                   grepl('777', description) | 
+                                   grepl('Lockheed L-1011', description) | 
+                                   grepl('DC-10', description) | 
+                                   grepl('MD-11', description) ~ 1,
+                                 TRUE ~ 0))
 
 intl_domestic_seats_fleet %>%
-  distinct(description) %>%
-  arrange(description) %>%
-  as.data.frame()
+  filter(intl == 0) %>%
+  group_by(unique_carrier,
+           year,
+           twin_aisle) %>%
+  summarise(asm = sum(avl_seat_miles_320)) %>%
+  ungroup() %>%
+  group_by(year,
+           unique_carrier) %>%
+  mutate(pct_asm = asm/sum(asm)) %>%
+  ungroup() %>%
+  filter(twin_aisle == 1) %>%
+  ggplot() + 
+  geom_line(mapping = aes(x = year,
+                          y = pct_asm,
+                          color = unique_carrier))
