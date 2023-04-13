@@ -22,7 +22,7 @@ colnames(airline_t2) <- tolower(colnames(airline_t2))
 aircraft <- read.csv('C:/Users/alexe/OneDrive/Desktop/L_AIRCRAFT_TYPE.csv')
 colnames(aircraft) <- tolower(colnames(aircraft))
 
-us_airlines <- c('AA', 'UA', 'DL', 'US', 'NW', 'CO')
+us_airlines <- c('AA', 'UA', 'DL', 'US', 'NW', 'CO', 'TW')
 
 # data prep ----
 
@@ -101,4 +101,63 @@ intl_domestic_seats_fleet %>%
   ggplot() + 
   geom_line(mapping = aes(x = year,
                           y = pct_asm,
-                          color = unique_carrier))
+                          group = unique_carrier),
+            size = 1.8,
+            color = 'white') + 
+  geom_line(mapping = aes(x = year,
+                          y = pct_asm,
+                          color = unique_carrier),
+            size = 1) +
+  theme(
+    plot.title = element_text(face = 'bold', 
+                              size = 14, 
+                              family = 'Noto Sans'),
+    plot.subtitle = element_markdown(),
+    plot.caption = element_text(size = 10,
+                                family = 'Noto Sans',
+                                hjust = 0),
+    axis.title =  ggplot2::element_blank(),
+    axis.text.x = element_text(size = 12, 
+                               #face= bold_label,
+                               family = 'Noto Sans'),
+    axis.text.y = element_text(size = 12, 
+                               family = 'Noto Sans'),
+    strip.text = ggplot2::element_text(size = 12, 
+                                       face = 'bold',
+                                       hjust = 0, 
+                                       family = 'Noto Sans'),
+    plot.title.position = "plot", 
+    plot.caption.position = 'plot',
+    legend.position = 'top',
+    legend.background=element_blank(),
+    legend.key=element_blank(),
+    legend.text = element_text(size = 16),
+    legend.title = element_text(size = 12),
+    axis.line.x.bottom = element_blank(),
+    axis.line.y.left = element_blank(),
+    axis.ticks.y= ggplot2::element_blank(), 
+    axis.ticks.x = ggplot2::element_blank(),
+    strip.background = element_rect(fill = NA),
+    #plot.background = element_rect(fill = "transparent", color = NA),
+    panel.background = ggplot2::element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = ggplot2::element_blank()) 
+
+intl_domestic_seats_fleet %>%
+  filter(unique_carrier == 'DL') %>%
+  filter(grepl('767-3', description)) %>%
+  group_by(year,
+           unique_carrier,
+           description) %>%
+  mutate(pct_asm = avl_seat_miles_320/sum(avl_seat_miles_320)) %>%
+  ungroup() %>%
+  group_by(#year,
+           unique_carrier,
+           description, intl) %>%
+  mutate(yoy = (avl_seat_miles_320-lag(avl_seat_miles_320))/lag(avl_seat_miles_320) ) %>%
+  ungroup() %>%
+  filter(year <= 2019) %>%
+  ggplot() + 
+  geom_line(mapping = aes(x = year,
+                          y = yoy,
+                          color = factor(intl)))
