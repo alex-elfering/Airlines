@@ -199,12 +199,12 @@ time_series_ua %>%
                                'Other' = 'gray30')) +
   labs(title = "American Airlines Domestic Fleet Capacity",
        fill = '',
-       subtitle = "Percentage of ASMs by aircraft between 1991-2022*",
-       caption = '\nVisualization by Alex Elfering\nSource: Bureau of Transportation Statistics T2: U.S. Air Carrier TRAFFIC And Capacity Statistics by Aircraft Type\nThrough September 2022') +
+       subtitle = "Percentage of ASMs by aircraft between 1991-2022*\n",
+       caption = '\nVisualization by Alex Elfering; *Through September 2022\nSource: Bureau of Transportation Statistics T2: U.S. Air Carrier TRAFFIC And Capacity Statistics by Aircraft Type') +
   scale_x_continuous(limits = c(1991,2025),expand = c(0, 0)) +
   scale_y_continuous(labels = c('0', '25', '50', '75', '100%'),
-                     limits = c(0,1.1),
-                     expand = c(0, 0.000001)) +
+                     limits = c(0,1.07),
+                     expand = c(0, 0)) +
   #expand_limits(y = 1.18) + 
   #geom_hline(yintercept = 0) +
   #geom_hline(yintercept = 0.5,
