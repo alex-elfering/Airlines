@@ -145,16 +145,7 @@ time_series_ua <- intl_domestic_seats_fleet %>%
   summarise(share_asm = sum(share_asm)) %>%
   ungroup() 
 
-#458cff
-#91acfb
-#c4cdf6
-#f1f1f1
-#fbc6b4
-#fb9b7b
-#f46d43
-
-
-time_series_ua %>%
+final_viz <- time_series_ua %>%
   ggplot(aes(x = year,
              y = share_asm,
              group = group_highlight,
@@ -201,7 +192,10 @@ time_series_ua %>%
        fill = '',
        subtitle = "Percentage of ASMs by aircraft between 1991-2022*\n",
        caption = '\nVisualization by Alex Elfering; *Through September 2022\nSource: Bureau of Transportation Statistics T2: U.S. Air Carrier TRAFFIC And Capacity Statistics by Aircraft Type') +
-  scale_x_continuous(limits = c(1991,2025),expand = c(0, 0)) +
+  scale_x_continuous(limits = c(1991,2025),
+                     expand = c(0, 0),
+                     labels = seq(1991, 2025, 5),
+                     breaks = seq(1991, 2025, 5)) +
   scale_y_continuous(labels = c('0', '25', '50', '75', '100%'),
                      limits = c(0,1.07),
                      expand = c(0, 0)) +
@@ -245,3 +239,4 @@ time_series_ua %>%
     panel.grid.minor = element_blank(),
     panel.grid.major = ggplot2::element_blank()) 
 
+ggsave(final_viz, file="final_viz.png", width=12, height=6, units = 'in')
