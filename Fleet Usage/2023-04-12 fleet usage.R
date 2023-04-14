@@ -160,7 +160,7 @@ time_series_ua %>%
              group = group_highlight,
              fill = group_highlight)) + 
   geom_area() +
-  geom_text_repel(data = time_series_ua %>% filter(year == last(year), share_asm > 0),
+  geom_label_repel(data = time_series_ua %>% filter(year == last(year), share_asm > 0),
             aes(x = year + 0.5, 
                 y = share_asm, 
                 label = group_highlight,
@@ -170,7 +170,7 @@ time_series_ua %>%
             fontface = 'bold',
             direction = "y",
             hjust = -0) + 
-  geom_label_repel(data = time_series_ua %>% filter(year == first(year)+1, share_asm > 0),
+  geom_label_repel(data = time_series_ua %>% filter(year == first(year)+3, share_asm > 0),
             aes(x = year - 0.5, 
                 y = share_asm, 
                 label = group_highlight,
@@ -197,11 +197,11 @@ time_series_ua %>%
                                'B767' = '#bdbdbd',
                                'B727' = '#969696',
                                'Other' = 'gray30')) +
-  labs(title = "American Airlines Fleet Utilization",
+  labs(title = "American Airlines Domestic Fleet Capacity",
        fill = '',
-       #subtitle = "<span style = 'font-size:13pt'>The share of outbound seats from Florida airports between <b><span style = 'color:#b35806;'>wide-body</span></b> and <b><span style = 'color:#542788;'>narrow-body</span></b></span> planes 2003-2022.",
-       caption = '\nVisualization by Alex Elfering\nSource: Bureau of Transportation Statistics T2: U.S. Air Carrier TRAFFIC And Capacity Statistics by Aircraft Type') +
-  scale_x_continuous(limits = c(1991,2025)) +
+       subtitle = "Percentage of ASMs by aircraft between 1991-2022*",
+       caption = '\nVisualization by Alex Elfering\nSource: Bureau of Transportation Statistics T2: U.S. Air Carrier TRAFFIC And Capacity Statistics by Aircraft Type\nThrough September 2022') +
+  scale_x_continuous(limits = c(1991,2025),expand = c(0, 0)) +
   scale_y_continuous(labels = c('0', '25', '50', '75', '100%'),
                      limits = c(0,1.1),
                      expand = c(0, 0.000001)) +
