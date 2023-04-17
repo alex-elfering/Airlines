@@ -12,6 +12,9 @@ library(showtext)
 library(ggstream)
 library(ggrepel)
 
+font_add_google("Noto Sans", "Noto Sans")
+showtext_auto()
+
 options("device" = "windows")
 options(scipen = 999)
 
@@ -158,6 +161,7 @@ final_viz <- time_series_ua %>%
                 color = group_highlight),
             position = position_stack(vjust = 0.5),
             fill = 'white',
+            family = 'Noto Sans',
             fontface = 'bold',
             direction = "y",
             hjust = -0) + 
@@ -167,6 +171,7 @@ final_viz <- time_series_ua %>%
                 label = group_highlight,
                 color = group_highlight),
             fill = 'white',
+            family = 'Noto Sans',
             fontface = 'bold',
             direction = "y",
             position = position_stack(vjust = 0.5)) + 
@@ -238,5 +243,4 @@ final_viz <- time_series_ua %>%
     panel.background = ggplot2::element_blank(),
     panel.grid.minor = element_blank(),
     panel.grid.major = ggplot2::element_blank()) 
-
-ggsave(final_viz, file="final_viz.png", width=12, height=6, units = 'in')
+final_viz
