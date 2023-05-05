@@ -1,20 +1,15 @@
 # airline route map data visualization exploration
 
-library(tidylog)
 library(tidyverse)
 library(data.table)
 library(ggplot2)
 library(lubridate)
-library(ggpattern)
 library(sysfonts)
 library(ggtext)
 library(showtext)
 library(airportr)
 library(stringr)
 library(glue)
-library(zoo)
-library(gghighlight)
-library(ggstream)
 
 library(albersusa)
 library(sp)
