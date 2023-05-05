@@ -44,11 +44,6 @@ clean_schedule_df <- schedule_df %>%
                 crs_dep_time = crsdeptime,
                 crs_arr_time = crsarrtime,
                 crs_elapsed_time = crselapsedtime,
-                dep_delay = depdelayminutes,
-                taxi_out = taxiout,
-                wheels_off = wheelsoff,
-                wheels_on = wheelson,
-                arr_delay = arrdelay,
                 cancelled,
                 flights,
                 distance) %>%
@@ -73,24 +68,16 @@ clean_schedule_df <- schedule_df %>%
   mutate(new_adj = case_when(adj >= 20 ~ adj - 24,
                              adj <= -20 ~ adj + 24,
                              TRUE ~ adj),
-         final_arrival = init_arrival - hours(new_adj),
-         delayed = ifelse(dep_delay >= 15, 1, 0)) %>%
+         final_arrival = init_arrival - hours(new_adj)) %>%
   dplyr::select(fl_date,
                 mkt_unique_carrier,
                 op_unique_carrier,
                 mkt_carrier_fl_num,
                 origin,
                 dest,
-                dep_delay,
                 crs_dep_date,
-                taxi_out,
-                wheels_off,
-                arr_delay,
                 crs_arr_date = final_arrival,
-                wheels_on,
-                taxi_in,
                 crs_elapsed_time,
-                delayed,
                 flights,
                 cancelled) %>% 
   as.tibble() %>%
