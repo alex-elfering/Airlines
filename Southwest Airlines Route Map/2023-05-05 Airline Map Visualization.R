@@ -1,4 +1,5 @@
 # airline route map data visualization exploration
+# top flights based on total flights each way (OMA-MDW & MDW-OMA)
 
 library(tidyverse)
 library(data.table)
