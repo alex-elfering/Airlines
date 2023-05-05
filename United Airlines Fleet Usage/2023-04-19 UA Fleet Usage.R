@@ -13,8 +13,8 @@ library(ggstream)
 library(ggrepel)
 library(gghighlight)
 
-font_add_google("Noto Sans", "Noto Sans")
-showtext_auto()
+#font_add_google("Noto Sans", "Noto Sans")
+#showtext_auto()
 
 options("device" = "windows")
 options(scipen = 999)
