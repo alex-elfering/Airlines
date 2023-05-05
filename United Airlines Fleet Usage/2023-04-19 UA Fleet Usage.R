@@ -31,7 +31,7 @@ colnames(aircraft) <- tolower(colnames(aircraft))
 # data prep ----
 
 intl_domestic_seats_fleet <- airline_t2 %>%
-  filter(unique_carrier %in% c('UA')) %>%
+  filter(unique_carrier %in% c('DL', 'AA', 'UA')) %>%
   select(year,
          unique_carrier,
          unique_carrier_name,
@@ -122,12 +122,13 @@ shorter_plane_names <- intl_domestic_seats_fleet %>%
 
 # fleet utilization ----
 
-time_series_ua <- intl_domestic_seats_fleet %>%
-  filter(intl == 1) %>%
+mark1 <- intl_domestic_seats_fleet %>%
+  #filter(intl == 1) %>%
   left_join(shorter_plane_names) %>%
   group_by(year,
            group,
-           twin_aisle) %>%
+           twin_aisle,
+           intl) %>%
   summarise(asm = sum(avl_seat_miles_320)) %>%
   ungroup() %>%
   arrange(year, twin_aisle) %>%
@@ -136,19 +137,170 @@ time_series_ua <- intl_domestic_seats_fleet %>%
   complete(year = seq(1991, 2022)) %>%
   ungroup() %>%
   replace(is.na(.), 0) %>%
-  group_by(year) %>%
+  group_by(group,
+           year) %>%
   mutate(share_asm = asm/sum(asm)) %>%
-  ungroup()
+  ungroup() %>%
+  filter(group %in% c('B757', 'B767', 'B777')) %>%
+  mutate(asm_inverse = ifelse(intl == 1, asm*-1, asm),
+         asm_pct_inverse = ifelse(intl == 1, share_asm*-1, share_asm))
 
-time_series_ua %>%
-  ggplot(aes(x = year,
-             y = share_asm,
-             group = group,
-             fill = group)) + 
-  geom_bar(stat = 'identity',
-           position = 'stack',
-           width = 1,
-           color = 'white',
-           size = 1) +
+
+mark1 %>%
+  ggplot() + 
+  geom_bar(mapping = aes(x = year,
+                         y = asm_inverse,
+                         fill = factor(intl)),
+           stat = 'identity',
+           position = 'stack') +
+  geom_rect(mapping = aes(xmin = 2004.5,
+                          xmax = 2005.5,
+                          ymin = -Inf,
+                          ymax = Inf),
+            size = 1,
+            linetype = 'dashed',
+            fill = NA,
+            color = 'gray45') +
+  geom_rect(mapping = aes(xmin = 2009.5,
+                          xmax = 2010.5,
+                          ymin = -Inf,
+                          ymax = Inf),
+            size = 1,
+            linetype = 'dashed',
+            fill = NA,
+            color = 'gray45') +
+  geom_rect(mapping = aes(xmin = 2019.5,
+                          xmax = 2020.5,
+                          ymin = -Inf,
+                          ymax = Inf),
+            size = 1,
+            linetype = 'dashed',
+            fill = NA,
+            color = 'gray45') +
   facet_wrap(~group) +
-  gghighlight(year > 0) 
+  expand_limits(y = 1.18) + 
+  geom_hline(yintercept = 0) +
+  geom_hline(yintercept = 0.5,
+             linetype = 'dashed') +
+  scale_y_continuous(labels = scales::comma,
+                     #limits = c(0,1.1),
+                     expand = c(0, 0.000001)
+  ) +
+  guides(fill = guide_legend(nrow = 1)) +
+  theme(
+    plot.title = element_text(face = 'bold', 
+                              size = 14, 
+                              family = 'Noto Sans'),
+    plot.subtitle = element_markdown(),
+    plot.caption = element_text(size = 10,
+                                family = 'Noto Sans',
+                                hjust = 0),
+    axis.title =  ggplot2::element_blank(),
+    axis.text.x = element_text(size = 12, 
+                               #face= bold_label,
+                               family = 'Noto Sans'),
+    axis.text.y = element_text(size = 12, 
+                               family = 'Noto Sans'),
+    strip.text = ggplot2::element_text(size = 12, 
+                                       face = 'bold',
+                                       hjust = 0, 
+                                       family = 'Noto Sans'),
+    plot.title.position = "plot", 
+    plot.caption.position = 'plot',
+    legend.position = 'top',
+    legend.background=element_blank(),
+    legend.key=element_blank(),
+    legend.text = element_text(size = 16),
+    legend.title = element_text(size = 12),
+    axis.line.x.bottom = element_blank(),
+    axis.line.y.left = element_blank(),
+    axis.ticks.y= ggplot2::element_blank(), 
+    axis.ticks.x = ggplot2::element_blank(),
+    strip.background = element_rect(fill = NA),
+    #plot.background = element_rect(fill = "transparent", color = NA),
+    panel.background = ggplot2::element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = ggplot2::element_blank()) 
+
+
+mark1 %>%
+  ggplot() + 
+  geom_bar(mapping = aes(x = year,
+                         y = asm_pct_inverse,
+                         fill = factor(intl)),
+           width = 0.95,
+           stat = 'identity',
+           position = 'stack') +
+  geom_rect(mapping = aes(xmin = 2004.5,
+                          xmax = 2005.5,
+                          ymin = -Inf,
+                          ymax = Inf),
+            size = 1,
+            linetype = 'dashed',
+            fill = NA,
+            color = 'gray45') +
+  geom_rect(mapping = aes(xmin = 2009.5,
+                          xmax = 2010.5,
+                          ymin = -Inf,
+                          ymax = Inf),
+            size = 1,
+            linetype = 'dashed',
+            fill = NA,
+            color = 'gray45') +
+  geom_rect(mapping = aes(xmin = 2019.5,
+                          xmax = 2020.5,
+                          ymin = -Inf,
+                          ymax = Inf),
+            size = 1,
+            linetype = 'dashed',
+            fill = NA,
+            color = 'gray45') +
+  facet_wrap(~group) +
+  expand_limits(y = 1.18) + 
+  geom_hline(yintercept = 0) +
+  geom_hline(yintercept = 0.5,
+             size = 0.5,
+             linetype = 'dashed') +
+  geom_hline(yintercept = -0.5,
+             size = 0.5,
+             linetype = 'dashed') +
+  scale_y_continuous(labels = scales::percent,
+                     limits = c(-1,1),
+                     expand = c(0, 0.000001)
+  ) +
+  guides(fill = guide_legend(nrow = 1)) +
+  theme(
+    plot.title = element_text(face = 'bold', 
+                              size = 14, 
+                              family = 'Noto Sans'),
+    plot.subtitle = element_markdown(),
+    plot.caption = element_text(size = 10,
+                                family = 'Noto Sans',
+                                hjust = 0),
+    axis.title =  ggplot2::element_blank(),
+    axis.text.x = element_text(size = 12, 
+                               #face= bold_label,
+                               family = 'Noto Sans'),
+    axis.text.y = element_text(size = 12, 
+                               family = 'Noto Sans'),
+    strip.text = ggplot2::element_text(size = 12, 
+                                       face = 'bold',
+                                       hjust = 0, 
+                                       family = 'Noto Sans'),
+    plot.title.position = "plot", 
+    plot.caption.position = 'plot',
+    legend.position = 'top',
+    legend.background=element_blank(),
+    legend.key=element_blank(),
+    legend.text = element_text(size = 16),
+    legend.title = element_text(size = 12),
+    axis.line.x.bottom = element_blank(),
+    axis.line.y.left = element_blank(),
+    axis.ticks.y= ggplot2::element_blank(), 
+    axis.ticks.x = ggplot2::element_blank(),
+    strip.background = element_rect(fill = NA),
+    #plot.background = element_rect(fill = "transparent", color = NA),
+    panel.background = ggplot2::element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = ggplot2::element_blank()) 
+
