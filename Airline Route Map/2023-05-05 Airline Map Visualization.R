@@ -131,20 +131,16 @@ monthly_delays <- flights_not_cancelled %>%
   group_by(mkt_unique_carrier,
     origin,
     dest) %>%
-  summarise(flights = sum(flights),
-            delays = sum(delayed)) %>%
+  summarise(flights = sum(flights)) %>%
   ungroup() %>%
-  filter(flights > 3) %>%
-  arrange(desc(delays)) 
+  filter(flights > 3)
 
 monthly_delays_round_trip <- monthly_delays %>%
   inner_join(monthly_delays,
              by = c('mkt_unique_carrier' = 'mkt_unique_carrier',
                'dest' = 'origin',
                'origin' = 'dest')) %>%
-  mutate(total_delays = delays.x + delays.y,
-         total_flights = flights.x + flights.y,
-         rate = total_delays/total_flights)
+  mutate(total_flights = flights.x + flights.y)
 
 de_dupe_rows <- monthly_delays_round_trip[!duplicated(apply(monthly_delays_round_trip[,1:3], 1, function(row) paste(sort(row), collapse=""))),]
 
@@ -159,9 +155,8 @@ airport_routes <- de_dupe_rows %>%
                 -longitude) %>%
   arrange(desc(total_flights)) %>%
   mutate(rank_flights = dense_rank(desc(total_flights)),
-         top_route = ifelse(rank_flights <= 25, 'Top Rank', 'Bottom Rank'),
-         top_route = factor(top_route, levels = c('Top Rank', 'Bottom Rank')),
-         top_route = factor(top_route, levels = rev(levels(airport_routes$top_route))))
+         top_route = ifelse(rank_flights <= 25, 'Top 25', 'Not Top 25'),
+         top_route1 = reorder(top_route, top_route))
 
 USA <- usa_composite(proj="laea")  # creates map projection 
 USA_MAP <- tidy(USA, region="name")
@@ -226,29 +221,32 @@ ggplot() +
         y = lat, 
         map_id = id),
     color = 'white',
-    size = 0.5,
+    size = 0.25,
     fill = 'gray90'
   ) +
-  geom_curve(airport_routes %>% filter(top_route != 'Top Rank'), 
+  geom_curve(airport_routes %>% filter(top_route != 'Top 25'), 
              mapping = aes(x = x.x, 
                            y = y.x, 
                            xend = x.y, 
-                           yend = y.y,
-                           color = top_route),
+                           yend = y.y),
              color = '#fd8d3c',
              curvature = 0.3,
              size = 0.25,
-             alpha = 0.4) +
-  geom_curve(airport_routes %>% filter(top_route == 'Top Rank'), 
+             alpha = 0.4
+  ) +
+  geom_curve(airport_routes %>% filter(top_route == 'Top 25'), 
              mapping = aes(x = x.x, 
                            y = y.x, 
                            xend = x.y, 
                            yend = y.y,
-                           color = top_route),
-             color = '#fc4e2a',
+                           color = top_route1),
+             #color = '#fd8d3c',
              curvature = 0.3,
-             size = 1.25,
-             alpha = 0.8) +
+             size = 1,
+             alpha = 0.8
+             ) +
+  scale_color_manual('Legend:',
+                     values = c('#fc4e2a')) +
   geom_point(full_airport, 
              mapping = aes(x = x, 
                            y = y),
@@ -266,13 +264,14 @@ ggplot() +
                   size = 2,
                   fontface = 'bold') +
   labs(title = 'Southwest Highways in the Sky',
-       subtitle = 'The busiest flights flown by Southwest Airlines between Memorial Day through Labor Day 2022 by flights flown',
+       subtitle = 'The 25 busiest flights flown by Southwest Airlines between Memorial Day through Labor Day 2022 by flights flown',
        y = '',
        x = '',
+       color = '',
        caption = 'Source: On-Time Marketing Carrier On-Time Performance from the Bureau of Transporation Statistics\nVisualization by Alex Elfering\nCancelled flights are excluded; Flight date is based on original CRS date') +
   theme(plot.title = element_text(face = 'bold',family = 'Arial', size = 16),
         plot.subtitle = element_text(size = 14,family = 'Arial'),
-        legend.position = 'none',
+        legend.position = 'top',
         legend.background=element_blank(),
         legend.key=element_blank(),
         legend.title = element_text(size = 16,
