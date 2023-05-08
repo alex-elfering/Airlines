@@ -1,4 +1,5 @@
 # the percentage of flights cancelled at Des Moines
+# huge help thanks to: https://thisisdaryn.netlify.app/post/making-a-calendar-visualization-with-ggplot2/
 
 library(tidylog)
 library(tidyverse)
