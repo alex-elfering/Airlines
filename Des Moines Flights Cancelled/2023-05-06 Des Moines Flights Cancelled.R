@@ -157,7 +157,7 @@ cancelled_totals %>%
                     breaks = c('0%', '1-10%', '10-20%', '20-30%', '>=30%')) +
   labs(title = 'Cancelled Des Moines Flights in 2022',
        subtitle = 'The daily percentage of flights cancelled, broken out by week and month',
-       caption = 'Source: On-Time Marketing Carrier On-Time Performance from the Bureau of Transporation Statistics',
+       caption = 'Source: On-Time Marketing Carrier On-Time Performance from the Bureau of Transporation Statistics\nVisualization by Alex Elfering',
        fill = '% of Cancelled Flights: ',
        x = '',
        y = '') +
