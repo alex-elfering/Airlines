@@ -103,7 +103,7 @@ ua_lhr %>%
              scales = 'free_x') +
   labs(title = 'United Airlines Seat Capacity to London Heathrow',
        subtitle = 'The share of outbound seats on United Airlines from the United States to London Heathrow by origin airport between 1991-2022*',
-       caption = '\n*As of October 2022\nSource: Bureau of Transportation Statistics T-100 International Segment\nVisualization by Alex Elfering') +
+       caption = '\n*As of November 2022\nSource: Bureau of Transportation Statistics T-100 International Segment\nVisualization by Alex Elfering') +
   theme(
     plot.title = element_text(face = 'bold', 
                               size = 14, 
