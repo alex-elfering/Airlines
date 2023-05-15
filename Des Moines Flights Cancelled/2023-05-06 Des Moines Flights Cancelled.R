@@ -147,7 +147,8 @@ cancelled_totals %>%
              fill = cancelled_group,
              pattern = cancelled_group), 
          colour = "white") + 
-  geom_tile(colour = "white") +
+  geom_tile(colour = "white",
+            size = 1) +
   geom_tile_pattern(fill = NA,
                     pattern_color = "white",
                     pattern_fill = "white",
@@ -169,7 +170,7 @@ cancelled_totals %>%
              scales = "free",
              nrow = 3,
              ncol = 4) +
-  scale_fill_manual(name = 'Scale',
+  scale_fill_manual(name = '% of Cancelled Flights: ',
                     values = c('0%' = 'gray85', 
                                '1-10%' = '#fdbb84', 
                                '10-20%' = '#fc8d59', 
@@ -177,7 +178,7 @@ cancelled_totals %>%
                                '>=30%' = '#b30000'),
                     breaks = c('0%', '1-10%', '10-20%', '20-30%', '>=30%')) +
   scale_pattern_manual(
-    name = "Scale",
+    name = "% of Cancelled Flights: ",
     values = c(
       '0%' = 'stripe', 
       '1-10%' = 'none', 
@@ -186,6 +187,9 @@ cancelled_totals %>%
       '>=30%' = 'none'),
     breaks = c('0%', '1-10%', '10-20%', '20-30%', '>=30%')
     ) +
+  scale_x_continuous(breaks = seq(1, 7, 1),
+                     labels = wday_vec,
+                     position = 'top') +
   #geom_tile_pattern(#cancelled_totals %>% filter(cancelled_group == '0%'),
   #                  mapping = aes(x = wday, 
   #                                y = week),
@@ -210,6 +214,7 @@ cancelled_totals %>%
   theme(plot.title = element_text(face = 'bold',family = 'Arial', size = 16),
         plot.subtitle = element_text(size = 14,family = 'Arial'),
         legend.position = 'top',
+        strip.placement = "outside",
         legend.background=element_blank(),
         legend.key=element_blank(),
         legend.title = element_text(size = 10,
@@ -223,7 +228,8 @@ cancelled_totals %>%
         plot.caption.position =  "plot",
         plot.caption = element_text(size = 10, color = "#c1c1c1",family = 'Arial'),
         axis.title = element_text(size = 12),
-        axis.text = element_blank(),
+        axis.text.x = element_text(size = 10,family = 'Arial'),
+        axis.text.y = element_blank(),
         axis.line = element_blank(),
         axis.ticks = element_blank(),
         strip.text = element_text(size = 10,
@@ -236,5 +242,6 @@ cancelled_totals %>%
         panel.grid.major.x = ggplot2::element_blank(),
         panel.grid.major.y = ggplot2::element_blank())
 
+ggsave(file = glue('C:/Users/alexe/OneDrive/Desktop/cancelled.png'), dpi = 300,  width = 13, height = 9, units = c('in'))
 
 
