@@ -14,8 +14,8 @@ library(airportr)
 library(stringr)
 library(glue)
 
-font_add_google("Orbitron", "Orbitron")
-showtext_auto()
+#font_add_google("Orbitron", "Orbitron")
+#showtext_auto()
 
 options("device" = "windows")
 options(scipen = 999)
@@ -167,7 +167,8 @@ cancelled_totals %>%
             color = 'black') +
   facet_wrap(~text_month, 
              scales = "free",
-             nrow = 2) +
+             nrow = 3,
+             ncol = 4) +
   scale_fill_manual(name = 'Scale',
                     values = c('0%' = 'gray85', 
                                '1-10%' = '#fdbb84', 
