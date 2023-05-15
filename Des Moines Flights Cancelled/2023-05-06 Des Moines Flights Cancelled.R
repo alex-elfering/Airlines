@@ -138,10 +138,11 @@ cancelled_totals <- clean_schedule_df %>%
                                    rate > 0.1 & rate <= 0.2 ~ '10-20%',
                                    rate > 0.2 & rate <= 0.3 ~ '20-30%',
                                    TRUE ~ '>=30%'),
-         cancelled_grop = factor(cancelled_group, levels = c('0%', '1-10%', '10-20%', '20-30%', '>=30%')))
+         cancelled_grop = factor(cancelled_group, levels = c('0%', '1-10%', '10-20%', '20-30%', '>=30%')),
+         day_int = wday(fl_date))
 
 cancelled_totals %>%
-  ggplot(aes(x = wday, 
+  ggplot(aes(x = day_int, 
              y = week,
              fill = cancelled_group,
              pattern = cancelled_group), 
@@ -154,6 +155,16 @@ cancelled_totals %>%
                     pattern_density = 0.1,
                     pattern_spacing = 0.025,
                     pattern_key_scale_factor = 0.5) +
+  geom_rect(cancelled_totals %>% 
+              filter(fl_date >= as.Date('2022-12-22') & fl_date <= as.Date('2022-12-24')) %>%
+              filter(fl_date == min(fl_date) | fl_date == max(fl_date)) ,
+            mapping = aes(xmin = min(day_int)-0.5,
+                          xmax = max(day_int)+0.5,
+                          ymin = week-0.5,
+                          ymax = week+0.5),
+            size = 1,
+            fill = NA,
+            color = 'black') +
   facet_wrap(~text_month, 
              scales = "free",
              nrow = 2) +
@@ -163,13 +174,6 @@ cancelled_totals %>%
                                '10-20%' = '#fc8d59', 
                                '20-30%' = '#e34a33', 
                                '>=30%' = '#b30000'),
-                    labels = c(expression(
-                      italic('0%'),
-                      italic('1-10%'),
-                      italic('10-20%'),
-                      italic('20-30%'),
-                      italic('>=30%')
-                    )),
                     breaks = c('0%', '1-10%', '10-20%', '20-30%', '>=30%')) +
   scale_pattern_manual(
     name = "Scale",
@@ -179,13 +183,6 @@ cancelled_totals %>%
       '10-20%' = 'none', 
       '20-30%' = 'none', 
       '>=30%' = 'none'),
-    labels = c(expression(
-      italic('0%'),
-      italic('1-10%'),
-      italic('10-20%'),
-      italic('20-30%'),
-      italic('>=30%')
-    )),
     breaks = c('0%', '1-10%', '10-20%', '20-30%', '>=30%')
     ) +
   #geom_tile_pattern(#cancelled_totals %>% filter(cancelled_group == '0%'),
