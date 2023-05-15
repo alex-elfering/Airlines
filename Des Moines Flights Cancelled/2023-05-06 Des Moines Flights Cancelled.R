@@ -141,20 +141,63 @@ cancelled_totals <- clean_schedule_df %>%
          cancelled_grop = factor(cancelled_group, levels = c('0%', '1-10%', '10-20%', '20-30%', '>=30%')))
 
 cancelled_totals %>%
-  ggplot() + 
-  geom_tile(aes(x = wday, 
-                y = week,
-                fill = cancelled_group), 
-            colour = "white") +
+  ggplot(aes(x = wday, 
+             y = week,
+             fill = cancelled_group,
+             pattern = cancelled_group), 
+         colour = "white") + 
+  geom_tile(colour = "white") +
+  geom_tile_pattern(fill = NA,
+                    pattern_color = "white",
+                    pattern_fill = "white",
+                    pattern_angle = 45,
+                    pattern_density = 0.1,
+                    pattern_spacing = 0.025,
+                    pattern_key_scale_factor = 0.5) +
   facet_wrap(~text_month, 
              scales = "free",
              nrow = 2) +
-  scale_fill_manual(values = c('0%' = 'gray85', 
+  scale_fill_manual(name = 'Scale',
+                    values = c('0%' = 'gray85', 
                                '1-10%' = '#fdbb84', 
                                '10-20%' = '#fc8d59', 
                                '20-30%' = '#e34a33', 
                                '>=30%' = '#b30000'),
+                    labels = c(expression(
+                      italic('0%'),
+                      italic('1-10%'),
+                      italic('10-20%'),
+                      italic('20-30%'),
+                      italic('>=30%')
+                    )),
                     breaks = c('0%', '1-10%', '10-20%', '20-30%', '>=30%')) +
+  scale_pattern_manual(
+    name = "Scale",
+    values = c(
+      '0%' = 'stripe', 
+      '1-10%' = 'none', 
+      '10-20%' = 'none', 
+      '20-30%' = 'none', 
+      '>=30%' = 'none'),
+    labels = c(expression(
+      italic('0%'),
+      italic('1-10%'),
+      italic('10-20%'),
+      italic('20-30%'),
+      italic('>=30%')
+    )),
+    breaks = c('0%', '1-10%', '10-20%', '20-30%', '>=30%')
+    ) +
+  #geom_tile_pattern(#cancelled_totals %>% filter(cancelled_group == '0%'),
+  #                  mapping = aes(x = wday, 
+  #                                y = week),
+  #                  fill = NA,
+  #                  pattern_color = "white",
+  #                  pattern_fill = "white",
+  #                  pattern_angle = 45,
+  #                  pattern_density = 0.1,
+  #                  pattern_spacing = 0.025,
+  #                  pattern_key_scale_factor = 0.5) +
   labs(title = 'Cancelled Des Moines Flights in 2022',
        subtitle = 'The daily percentage of flights cancelled, broken out by week and month',
        caption = 'Source: On-Time Marketing Carrier On-Time Performance from the Bureau of Transporation Statistics\nVisualization by Alex Elfering',
@@ -162,6 +205,10 @@ cancelled_totals %>%
        x = '',
        y = '') +
   scale_y_reverse() +
+  #scale_pattern_fill_manual(
+  #  values = c("0%" = "stripe")
+  #) +
+  #guides(pattern = guide_legend(override.aes = list(fill = "gray85"), order = 2)) +
   theme(plot.title = element_text(face = 'bold',family = 'Arial', size = 16),
         plot.subtitle = element_text(size = 14,family = 'Arial'),
         legend.position = 'top',
