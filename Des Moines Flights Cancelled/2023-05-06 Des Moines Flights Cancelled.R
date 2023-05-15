@@ -218,9 +218,9 @@ cancelled_totals %>%
             fill = NA,
             color = 'black') +
   geom_segment(mapping = aes(x = max(day_int)+0.5, 
-                   y = max(week)-0.5, 
-                   xend = max(day_int)+0.5, 
-                   yend = max(week)+0.5), 
+                             y = max(week)-0.5, 
+                             xend = max(day_int)+0.5, 
+                             yend = max(week)+0.5), 
                data = cancelled_totals %>% 
                  filter(fl_date >= as.Date('2022-11-27') & fl_date <= as.Date('2022-11-30')) %>%
                  filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
@@ -244,7 +244,7 @@ cancelled_totals %>%
                  filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
                color = 'white',
                size = 1) +
-    geom_segment(mapping = aes(x = min(day_int)-0.5, 
+  geom_segment(mapping = aes(x = min(day_int)-0.5, 
                              y = max(week)-0.5, 
                              xend = max(day_int)+0.5, 
                              yend = min(week)-0.5), 
@@ -263,9 +263,9 @@ cancelled_totals %>%
                color = 'white',
                size = 1) +
   geom_segment(mapping = aes(x = min(day_int)-0.5, 
-                             y = min(week)+0.5, 
-                             xend = min(day_int)-0.5, 
-                             yend = max(week)-0.5), 
+                             y = max(week)+0.5, 
+                             xend = max(day_int)+0.5, 
+                             yend = max(week)+0.5), 
                data = cancelled_totals %>% 
                  filter(fl_date >= as.Date('2022-11-27') & fl_date <= as.Date('2022-11-30')) %>%
                  filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
@@ -291,17 +291,17 @@ cancelled_totals %>%
       '20-30%' = 'none', 
       '>=30%' = 'none'),
     breaks = c('0%', '1-10%', '10-20%', '20-30%', '>=30%')
-    ) +
-  #scale_x_continuous(breaks = seq(1, 7, 1),
-  #                   labels = wday_vec,
-  #                   position = 'top') +
+  ) +
+  scale_x_continuous(breaks = seq(1, 7, 1),
+                     labels = wday_vec,
+                     position = 'top') +
   labs(title = 'Cancelled Des Moines Flights in 2022',
        subtitle = 'The daily percentage of flights cancelled, broken out by week and month',
        caption = 'Source: On-Time Marketing Carrier On-Time Performance from the Bureau of Transporation Statistics\nVisualization by Alex Elfering',
        fill = '% of Cancelled Flights: ',
        x = '',
        y = '') +
-  #scale_y_reverse() +
+  scale_y_reverse() +
   theme(plot.title = element_text(face = 'bold',family = 'Arial', size = 16),
         plot.subtitle = element_text(size = 14,family = 'Arial'),
         legend.position = 'top',
