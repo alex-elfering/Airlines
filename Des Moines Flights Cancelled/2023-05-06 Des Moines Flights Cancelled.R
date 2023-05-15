@@ -254,11 +254,20 @@ cancelled_totals %>%
                color = 'white',
                size = 1) +
   geom_segment(mapping = aes(x = min(day_int)-0.5, 
-                             y = max(week)+0.5, 
-                             xend = max(day_int)-0.5, 
-                             yend = min(week)-0.5), 
+                             y = min(week)+0.5, 
+                             xend = min(day_int)-0.5, 
+                             yend = max(week)-0.5), 
                data = cancelled_totals %>% 
                  filter(fl_date >= as.Date('2022-12-01') & fl_date <= as.Date('2022-12-03')) %>%
+                 filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
+               color = 'white',
+               size = 1) +
+  geom_segment(mapping = aes(x = min(day_int)-0.5, 
+                             y = min(week)+0.5, 
+                             xend = min(day_int)-0.5, 
+                             yend = max(week)-0.5), 
+               data = cancelled_totals %>% 
+                 filter(fl_date >= as.Date('2022-11-27') & fl_date <= as.Date('2022-11-30')) %>%
                  filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
                color = 'white',
                size = 1) +
