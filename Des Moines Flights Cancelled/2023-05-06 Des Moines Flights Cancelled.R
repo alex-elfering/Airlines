@@ -139,7 +139,8 @@ cancelled_totals <- clean_schedule_df %>%
                                    rate > 0.2 & rate <= 0.3 ~ '20-30%',
                                    TRUE ~ '>=30%'),
          cancelled_grop = factor(cancelled_group, levels = c('0%', '1-10%', '10-20%', '20-30%', '>=30%')),
-         day_int = wday(fl_date))
+         day_int = wday(fl_date),
+         row = row_number())
 
 cancelled_totals %>%
   ggplot(aes(x = day_int, 
@@ -166,6 +167,101 @@ cancelled_totals %>%
             size = 1,
             fill = NA,
             color = 'black') +
+  geom_rect(cancelled_totals %>% 
+              filter(fl_date >= as.Date('2022-09-04') & fl_date <= as.Date('2022-09-17')) %>%
+              filter(fl_date == min(fl_date) | fl_date == max(fl_date)) ,
+            mapping = aes(xmin = min(day_int)-0.5,
+                          xmax = max(day_int)+0.5,
+                          ymin = min(week)-0.5,
+                          ymax = max(week)+0.5),
+            size = 1,
+            fill = NA,
+            color = 'black') +
+  geom_rect(cancelled_totals %>% 
+              filter(fl_date >= as.Date('2022-11-13') & fl_date <= as.Date('2022-11-26')) %>%
+              filter(fl_date == min(fl_date) | fl_date == max(fl_date)) ,
+            mapping = aes(xmin = min(day_int)-0.5,
+                          xmax = max(day_int)+0.5,
+                          ymin = min(week)-0.5,
+                          ymax = max(week)+0.5),
+            size = 1,
+            fill = NA,
+            color = 'black') +
+  geom_rect(cancelled_totals %>% 
+              filter(fl_date >= as.Date('2022-11-27') & fl_date <= as.Date('2022-11-30')) %>%
+              filter(fl_date == min(fl_date) | fl_date == max(fl_date)) ,
+            mapping = aes(xmin = min(day_int)-0.5,
+                          xmax = max(day_int)+0.5,
+                          ymin = min(week)-0.5,
+                          ymax = max(week)+0.5),
+            size = 1,
+            fill = NA,
+            color = 'black') +
+  geom_rect(cancelled_totals %>% 
+              filter(fl_date >= as.Date('2022-12-04') & fl_date <= as.Date('2022-12-10')) %>%
+              filter(fl_date == min(fl_date) | fl_date == max(fl_date)) ,
+            mapping = aes(xmin = min(day_int)-0.5,
+                          xmax = max(day_int)+0.5,
+                          ymin = min(week)-0.5,
+                          ymax = max(week)+0.5),
+            size = 1,
+            fill = NA,
+            color = 'black') +
+  geom_rect(cancelled_totals %>% 
+              filter(fl_date >= as.Date('2022-12-01') & fl_date <= as.Date('2022-12-03')) %>%
+              filter(fl_date == min(fl_date) | fl_date == max(fl_date)) ,
+            mapping = aes(xmin = min(day_int)-0.5,
+                          xmax = max(day_int)+0.5,
+                          ymin = min(week)-0.5,
+                          ymax = max(week)+0.5),
+            size = 1,
+            fill = NA,
+            color = 'black') +
+  geom_segment(mapping = aes(x = max(day_int)+0.5, 
+                   y = max(week)-0.5, 
+                   xend = max(day_int)+0.5, 
+                   yend = max(week)+0.5), 
+               data = cancelled_totals %>% 
+                 filter(fl_date >= as.Date('2022-11-27') & fl_date <= as.Date('2022-11-30')) %>%
+                 filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
+               color = 'white',
+               size = 1) +
+  geom_segment(mapping = aes(x = min(day_int)-0.5, 
+                             y = max(week)+0.5, 
+                             xend = max(day_int)+0.5, 
+                             yend = max(week)+0.5), 
+               data = cancelled_totals %>% 
+                 filter(fl_date >= as.Date('2022-11-20') & fl_date <= as.Date('2022-11-26')) %>%
+                 filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
+               color = 'white',
+               size = 1) +
+  geom_segment(mapping = aes(x = min(day_int)-0.5, 
+                             y = max(week)-0.5, 
+                             xend = max(day_int)+0.5, 
+                             yend = min(week)-0.5), 
+               data = cancelled_totals %>% 
+                 filter(fl_date >= as.Date('2022-12-01') & fl_date <= as.Date('2022-12-03')) %>%
+                 filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
+               color = 'white',
+               size = 1) +
+    geom_segment(mapping = aes(x = min(day_int)-0.5, 
+                             y = max(week)-0.5, 
+                             xend = max(day_int)+0.5, 
+                             yend = min(week)-0.5), 
+               data = cancelled_totals %>% 
+                 filter(fl_date >= as.Date('2022-12-04') & fl_date <= as.Date('2022-12-10')) %>%
+                 filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
+               color = 'white',
+               size = 1) +
+  geom_segment(mapping = aes(x = min(day_int)-0.5, 
+                             y = max(week)+0.5, 
+                             xend = max(day_int)-0.5, 
+                             yend = min(week)-0.5), 
+               data = cancelled_totals %>% 
+                 filter(fl_date >= as.Date('2022-12-01') & fl_date <= as.Date('2022-12-03')) %>%
+                 filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
+               color = 'white',
+               size = 1) +
   facet_wrap(~text_month, 
              scales = "free",
              nrow = 3,
@@ -187,30 +283,16 @@ cancelled_totals %>%
       '>=30%' = 'none'),
     breaks = c('0%', '1-10%', '10-20%', '20-30%', '>=30%')
     ) +
-  scale_x_continuous(breaks = seq(1, 7, 1),
-                     labels = wday_vec,
-                     position = 'top') +
-  #geom_tile_pattern(#cancelled_totals %>% filter(cancelled_group == '0%'),
-  #                  mapping = aes(x = wday, 
-  #                                y = week),
-  #                  fill = NA,
-  #                  pattern_color = "white",
-  #                  pattern_fill = "white",
-  #                  pattern_angle = 45,
-  #                  pattern_density = 0.1,
-  #                  pattern_spacing = 0.025,
-  #                  pattern_key_scale_factor = 0.5) +
+  #scale_x_continuous(breaks = seq(1, 7, 1),
+  #                   labels = wday_vec,
+  #                   position = 'top') +
   labs(title = 'Cancelled Des Moines Flights in 2022',
        subtitle = 'The daily percentage of flights cancelled, broken out by week and month',
        caption = 'Source: On-Time Marketing Carrier On-Time Performance from the Bureau of Transporation Statistics\nVisualization by Alex Elfering',
        fill = '% of Cancelled Flights: ',
        x = '',
        y = '') +
-  scale_y_reverse() +
-  #scale_pattern_fill_manual(
-  #  values = c("0%" = "stripe")
-  #) +
-  #guides(pattern = guide_legend(override.aes = list(fill = "gray85"), order = 2)) +
+  #scale_y_reverse() +
   theme(plot.title = element_text(face = 'bold',family = 'Arial', size = 16),
         plot.subtitle = element_text(size = 14,family = 'Arial'),
         legend.position = 'top',
@@ -226,10 +308,10 @@ cancelled_totals %>%
                                    family = 'Arial'),
         plot.title.position = "plot",
         plot.caption.position =  "plot",
-        plot.caption = element_text(size = 10, color = "#c1c1c1",family = 'Arial'),
+        plot.caption = element_text(size = 10, color = "#c1c1c1",family = 'Arial', hjust = 0),
         axis.title = element_text(size = 12),
         axis.text.x = element_text(size = 10,family = 'Arial'),
-        axis.text.y = element_blank(),
+        axis.text.y = element_text(size = 10,family = 'Arial'),
         axis.line = element_blank(),
         axis.ticks = element_blank(),
         strip.text = element_text(size = 10,
