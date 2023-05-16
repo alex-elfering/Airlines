@@ -164,7 +164,7 @@ cancelled_totals %>%
                           xmax = max(day_int)+0.5,
                           ymin = week-0.5,
                           ymax = week+0.5),
-            size = 1,
+            size = 0.5,
             fill = NA,
             color = 'black') +
   geom_rect(cancelled_totals %>% 
@@ -174,7 +174,7 @@ cancelled_totals %>%
                           xmax = max(day_int)+0.5,
                           ymin = min(week)-0.5,
                           ymax = max(week)+0.5),
-            size = 1,
+            size = 0.5,
             fill = NA,
             color = 'black') +
   geom_rect(cancelled_totals %>% 
@@ -184,7 +184,7 @@ cancelled_totals %>%
                           xmax = max(day_int)+0.5,
                           ymin = min(week)-0.5,
                           ymax = max(week)+0.5),
-            size = 1,
+            size = 0.5,
             fill = NA,
             color = 'black') +
   geom_rect(cancelled_totals %>% 
@@ -194,7 +194,7 @@ cancelled_totals %>%
                           xmax = max(day_int)+0.5,
                           ymin = min(week)-0.5,
                           ymax = max(week)+0.5),
-            size = 1,
+            size = 0.5,
             fill = NA,
             color = 'black') +
   geom_rect(cancelled_totals %>% 
@@ -204,7 +204,7 @@ cancelled_totals %>%
                           xmax = max(day_int)+0.5,
                           ymin = min(week)-0.5,
                           ymax = max(week)+0.5),
-            size = 1,
+            size = 0.5,
             fill = NA,
             color = 'black') +
   geom_rect(cancelled_totals %>% 
@@ -214,7 +214,7 @@ cancelled_totals %>%
                           xmax = max(day_int)+0.5,
                           ymin = min(week)-0.5,
                           ymax = max(week)+0.5),
-            size = 1,
+            size = 0.5,
             fill = NA,
             color = 'black') +
   geom_segment(mapping = aes(x = max(day_int)+0.5, 
@@ -225,7 +225,7 @@ cancelled_totals %>%
                  filter(fl_date >= as.Date('2022-11-27') & fl_date <= as.Date('2022-11-30')) %>%
                  filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
                color = 'white',
-               size = 1) +
+               size = 0.5) +
   geom_segment(mapping = aes(x = min(day_int)-0.5, 
                              y = max(week)+0.5, 
                              xend = max(day_int)+0.5, 
@@ -234,34 +234,7 @@ cancelled_totals %>%
                  filter(fl_date >= as.Date('2022-11-20') & fl_date <= as.Date('2022-11-26')) %>%
                  filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
                color = 'white',
-               size = 1) +
-  geom_segment(mapping = aes(x = min(day_int)-0.5, 
-                             y = max(week)-0.5, 
-                             xend = max(day_int)+0.5, 
-                             yend = min(week)-0.5), 
-               data = cancelled_totals %>% 
-                 filter(fl_date >= as.Date('2022-12-01') & fl_date <= as.Date('2022-12-03')) %>%
-                 filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
-               color = 'white',
-               size = 1) +
-  geom_segment(mapping = aes(x = min(day_int)-0.5, 
-                             y = max(week)-0.5, 
-                             xend = max(day_int)+0.5, 
-                             yend = min(week)-0.5), 
-               data = cancelled_totals %>% 
-                 filter(fl_date >= as.Date('2022-12-04') & fl_date <= as.Date('2022-12-10')) %>%
-                 filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
-               color = 'white',
-               size = 1) +
-  geom_segment(mapping = aes(x = min(day_int)-0.5, 
-                             y = min(week)+0.5, 
-                             xend = min(day_int)-0.5, 
-                             yend = max(week)-0.5), 
-               data = cancelled_totals %>% 
-                 filter(fl_date >= as.Date('2022-12-01') & fl_date <= as.Date('2022-12-03')) %>%
-                 filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
-               color = 'white',
-               size = 1) +
+               size = 0.5) +
   geom_segment(mapping = aes(x = min(day_int)-0.5, 
                              y = max(week)+0.5, 
                              xend = max(day_int)+0.5, 
@@ -270,7 +243,34 @@ cancelled_totals %>%
                  filter(fl_date >= as.Date('2022-11-27') & fl_date <= as.Date('2022-11-30')) %>%
                  filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
                color = 'white',
-               size = 1) +
+               size = 0.5) +
+  geom_segment(mapping = aes(x = min(day_int)-0.5, 
+                             y = max(week)-0.5, 
+                             xend = max(day_int)+0.5, 
+                             yend = min(week)-0.5), 
+               data = cancelled_totals %>% 
+                 filter(fl_date >= as.Date('2022-12-01') & fl_date <= as.Date('2022-12-03')) %>%
+                 filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
+               color = 'white',
+               size = 0.5) +
+  geom_segment(mapping = aes(x = min(day_int)-0.5, 
+                             y = max(week)-0.5, 
+                             xend = max(day_int)+0.5, 
+                             yend = min(week)-0.5), 
+               data = cancelled_totals %>% 
+                 filter(fl_date >= as.Date('2022-12-04') & fl_date <= as.Date('2022-12-10')) %>%
+                 filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
+               color = 'white',
+               size = 0.5) +
+  geom_segment(mapping = aes(x = min(day_int)-0.5, 
+                             y = min(week)+0.5, 
+                             xend = min(day_int)-0.5, 
+                             yend = max(week)-0.5), 
+               data = cancelled_totals %>% 
+                 filter(fl_date >= as.Date('2022-12-01') & fl_date <= as.Date('2022-12-03')) %>%
+                 filter(fl_date == min(fl_date) | fl_date == max(fl_date)),
+               color = 'white',
+               size = 0.5) +
   facet_wrap(~text_month, 
              scales = "free",
              nrow = 3,
@@ -320,7 +320,7 @@ cancelled_totals %>%
         plot.caption = element_text(size = 10, color = "#c1c1c1",family = 'Arial', hjust = 0),
         axis.title = element_text(size = 12),
         axis.text.x = element_text(size = 10,family = 'Arial'),
-        axis.text.y = element_text(size = 10,family = 'Arial'),
+        axis.text.y = element_blank(),
         axis.line = element_blank(),
         axis.ticks = element_blank(),
         strip.text = element_text(size = 10,
