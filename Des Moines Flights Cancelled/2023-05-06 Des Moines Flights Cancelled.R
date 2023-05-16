@@ -302,8 +302,11 @@ cancelled_totals %>%
        x = '',
        y = '') +
   scale_y_reverse() +
-  theme(plot.title = element_text(face = 'bold',family = 'Arial', size = 16),
-        plot.subtitle = element_text(size = 14,family = 'Arial'),
+  theme(plot.title = element_text(face = 'bold',
+                                  family = 'Arial', 
+                                  size = 16),
+        plot.subtitle = element_text(size = 14,
+                                     family = 'Arial'),
         legend.position = 'top',
         strip.placement = "outside",
         legend.background=element_blank(),
@@ -317,21 +320,27 @@ cancelled_totals %>%
                                    family = 'Arial'),
         plot.title.position = "plot",
         plot.caption.position =  "plot",
-        plot.caption = element_text(size = 10, color = "#c1c1c1",family = 'Arial', hjust = 0),
+        plot.caption = element_text(size = 10, 
+                                    color = "#c1c1c1",
+                                    family = 'Arial', 
+                                    hjust = 0),
         axis.title = element_text(size = 12),
-        axis.text.x = element_text(size = 10,family = 'Arial'),
+        #axis.text.x = ifelse(cancelled_totals$text_month == 'January', element_text(size = 10), element_blank()),
+        axis.text.x = element_text(size = 10,
+                                   family = 'Arial'),
         axis.text.y = element_blank(),
         axis.line = element_blank(),
         axis.ticks = element_blank(),
-        strip.text = element_text(size = 10,
+        strip.text = element_text(size = 12,
                                   color = 'black',
-                                  #face = 'bold',
+                                  face = 'bold',
                                   family = 'Arial'),
         strip.background = element_rect(fill = NA),
         panel.background = element_rect(fill = NA),
         panel.grid.minor = ggplot2::element_blank(),
         panel.grid.major.x = ggplot2::element_blank(),
-        panel.grid.major.y = ggplot2::element_blank())
+        panel.grid.major.y = ggplot2::element_blank(),
+        panel.spacing = unit(2, "lines"))
 
 ggsave(file = glue('C:/Users/alexe/OneDrive/Desktop/cancelled.png'), dpi = 300,  width = 13, height = 9, units = c('in'))
 
