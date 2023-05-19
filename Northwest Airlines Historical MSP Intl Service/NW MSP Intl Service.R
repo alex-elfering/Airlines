@@ -12,8 +12,8 @@ library(showtext)
 library(gghighlight)
 library(glue)
 
-font_add_google("Noto Sans", "Noto Sans")
-showtext_auto()
+#font_add_google("Noto Sans", "Noto Sans")
+#showtext_auto()
 
 options("device" = "windows")
 options(scipen = 999)
@@ -180,3 +180,5 @@ nw_df_join %>%
         panel.grid.major.x = ggplot2::element_blank(),
         panel.grid.major.y = ggplot2::element_blank(),
         panel.spacing = unit(2, "lines"))
+
+ggsave(file = glue('C:/Users/alexe/OneDrive/Desktop/NW.png'), dpi = 300,  width = 8, height = 12, units = c('in'))
