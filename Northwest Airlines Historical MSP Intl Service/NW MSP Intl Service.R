@@ -135,7 +135,7 @@ nw_df_join %>%
   guides(fill = guide_legend(nrow = 1)) +
   labs(title = "Northwest Airlines Minneapolis Int'l Service 1990-2009",
        subtitle = "Based on total % of outbound seats annually.",
-       caption = 'Source: Bureau of Transportation Statistics T-100 International Segment\nVisualization by Alex Elfering',
+       caption = 'Source: Bureau of Transportation Statistics T-100 International Segment\nNote:Only examines mainline fleet and does not account for regional partners\nVisualization by Alex Elfering',
        fill = '',
        x = '',
        y = '') +
