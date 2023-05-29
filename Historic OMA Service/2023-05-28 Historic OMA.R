@@ -66,11 +66,12 @@ outbound_flight_details <- intl_df |>
   select(-year,
          -month)
 
-year_var <- 1995
+year_var <- 1990
 
 aircraft_used <- outbound_flight_details |>
   filter(year(flight_month) == year_var) |>
   select(carrier,
+         dest,
          description) |>
   distinct() |>
   mutate(description = case_when(grepl('Super 80', description) ~ 'MD-80 series',
@@ -79,13 +80,15 @@ aircraft_used <- outbound_flight_details |>
                         grepl('McDonnell Douglas DC-10', description) ~ gsub('McDonnell Douglas ', '', description),
                         TRUE ~ description)) |>
   arrange(carrier,
+          dest,
           description) |>
-  group_by(carrier) |>
+  group_by(carrier,
+           dest) |>
   mutate(carrier_des = row_number()) |>
   ungroup() |>
   pivot_wider(names_from = carrier_des,
               values_from = description) |>
-  unite(aircraft_used , -c(carrier), sep =', ', na.rm = TRUE)
+  unite(aircraft_used , -c(carrier, dest), sep =', ', na.rm = TRUE)
 
 stats_overall <- outbound_flight_details |>
   filter(year(flight_month) == year_var) |>
@@ -101,6 +104,7 @@ outbound_flight_details |>
   filter(year(flight_month) == year_var) |>
   #filter(dest == 'LNK') |>
   group_by(dest,
+           dest_city_name,
            carrier,
            carrier_name) |>
   summarise(from_date = as.yearmon(min(flight_month)),
@@ -128,6 +132,23 @@ outbound_flight_details |>
   tab_spanner(
     label = "Per Month",
     columns = c(mean_tot_seats, mean_tot_passengers, mean_tot_departures)
+  )|>
+  tab_style(
+    style = cell_text(
+      size = px(12),
+      color = "black",
+      font = "arial",
+      weight = 'bold',
+    ),
+    locations = cells_column_labels(columns = everything())
+  ) |>
+  tab_style(
+    style = cell_text(
+      size = px(12),
+      color = "#999",
+      font = "franklin",
+    ),
+    locations = cells_body(columns = c(date_range))
   ) |>
   cols_label(
     dest = "Destination",
@@ -139,5 +160,12 @@ outbound_flight_details |>
     mean_tot_seats = 'Seats',
     mean_tot_passengers = 'Passengers',
     mean_tot_departures = 'Departures',
-    aircraft_used = 'Aircraft Used')
-  
+    aircraft_used = 'Aircraft Used') |>
+  cols_width(dest ~ px(100),
+             carrier_name ~ px(150)) |>
+  tab_options(table.font.size = 12,
+              table.font.names = 'Courier') |>
+  tab_header(
+    title = md("Omaha Eppley Airfield Passenger Stats"),
+    subtitle = md("Outbound passenger stats, 1990")
+  )
