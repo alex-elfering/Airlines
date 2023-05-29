@@ -92,9 +92,9 @@ stats_overall <- outbound_flight_details |>
   #filter(dest == 'LNK') |>
   group_by(dest,
            carrier) |>
-  summarise(median_tot_seats = median(seats),
-            median_tot_passengers = median(passengers),
-            median_tot_departures = median(departures_performed)) |>
+  summarise(mean_tot_seats = mean(seats),
+            mean_tot_passengers = mean(passengers),
+            mean_tot_departures = mean(departures_performed)) |>
   ungroup()
 
 outbound_flight_details |>
@@ -105,27 +105,39 @@ outbound_flight_details |>
            carrier_name) |>
   summarise(from_date = as.yearmon(min(flight_month)),
             to_date = as.yearmon(max(flight_month)),
-            median_seats = median(seats_departure),
-            median_ld_fctr = median(load_factor),
-            median_air_time = median(air_time_departure)) |>
+            mean_seats = mean(seats_departure),
+            mean_ld_fctr = mean(load_factor),
+            mean_air_time = mean(air_time_departure)) |>
   ungroup() |>
   inner_join(stats_overall) |>
   inner_join(aircraft_used) |>
-  arrange(desc(median_tot_passengers)) |>
+  arrange(desc(mean_tot_passengers)) |>
   unite(date_range, c('from_date', 'to_date'), sep = '-')  |>
   mutate(carrier_name = case_when(grepl(' Inc.', carrier_name) ~ gsub(' Inc.', '', carrier_name),
                                   grepl(' Corporation', carrier_name) ~ gsub(' Corporation', '', carrier_name),
                                   grepl(' Co.', carrier_name) ~ gsub(' Co.', '', carrier_name),
                                   TRUE ~ carrier_name)) |>
+  select(-carrier) |>
   gt() |>
-  fmt_integer(columns = c('median_seats', 'median_ld_fctr', 'median_air_time', 'median_tot_seats', 'median_tot_passengers', 'median_tot_departures'),
+  fmt_integer(columns = c('mean_seats', 'mean_ld_fctr', 'mean_air_time', 'mean_tot_seats', 'mean_tot_passengers', 'mean_tot_departures'),
               use_seps = TRUE) |>
   tab_spanner(
     label = "Per Departure",
-    columns = c(median_seats, median_ld_fctr, median_air_time)
+    columns = c(mean_seats, mean_ld_fctr, mean_air_time)
   ) |>
   tab_spanner(
     label = "Per Month",
-    columns = c(median_tot_seats, median_tot_passengers, median_tot_departures)
-  )
+    columns = c(mean_tot_seats, mean_tot_passengers, mean_tot_departures)
+  ) |>
+  cols_label(
+    dest = "Destination",
+    carrier_name = "Airline",
+    date_range = "Served Between",
+    mean_seats = 'Seats',
+    mean_ld_fctr = 'Load Factor',
+    mean_air_time = 'Air Time (minutes)',
+    mean_tot_seats = 'Seats',
+    mean_tot_passengers = 'Passengers',
+    mean_tot_departures = 'Departures',
+    aircraft_used = 'Aircraft Used')
   
