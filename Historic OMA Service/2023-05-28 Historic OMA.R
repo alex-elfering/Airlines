@@ -67,7 +67,7 @@ outbound_flight_details <- intl_df |>
   select(-year,
          -month)
 
-year_var <- 1995
+year_var <- 1996
 
 aircraft_used <- outbound_flight_details |>
   filter(year(flight_month) == year_var) |>
@@ -107,7 +107,7 @@ plus_percent <- function(.x) {
   glue::glue("{.x}%")
 }
 
-outbound_flight_details |>
+oma_tabl <- outbound_flight_details |>
   filter(year(flight_month) == year_var) |>
   #filter(dest == 'LNK') |>
   group_by(dest,
@@ -124,7 +124,9 @@ outbound_flight_details |>
   inner_join(aircraft_used) |>
   arrange(desc(mean_tot_passengers)) |>
   unite(date_range, c('from_date', 'to_date'), sep = '-')  |>
-  unite(city_airport, c('dest', 'dest_city_name'), sep = ' ') |>
+  #unite(city_airport, c('dest', 'dest_city_name'), sep = ' ') |>
+  separate(dest_city_name, into = c('city', 'state'), sep = ', ') |>
+  mutate(city_airport = paste(city, ' (' ,dest, ')', sep = '')) |>
   mutate(carrier_name = case_when(grepl(' Inc.', carrier_name) ~ gsub(' Inc.', '', carrier_name),
                                   grepl(' Corporation', carrier_name) ~ gsub(' Corporation', '', carrier_name),
                                   grepl(' Co.', carrier_name) ~ gsub(' Co.', '', carrier_name),
@@ -136,18 +138,19 @@ outbound_flight_details |>
          mean_tot_seats,
          mean_tot_passengers,
          mean_tot_departures,
-         mean_seats,
          mean_ld_fctr,
+         mean_seats,
          mean_air_time,
          aircraft_used) |>
-  filter(carrier_name != 'Casino Express') %>%
+  filter(carrier_name != 'Casino Express') |>
   gt() |>
   fmt_integer(columns = c('mean_seats', 'mean_ld_fctr', 'mean_air_time', 'mean_tot_seats', 'mean_tot_passengers', 'mean_tot_departures'),
               use_seps = TRUE) |>
-  fmt(mean_ld_fctr, fns = plus_percent) |>
+  fmt(mean_ld_fctr, 
+      fns = plus_percent) |>
   tab_spanner(
     label = "Per Departure",
-    columns = c(mean_seats, mean_ld_fctr, mean_air_time)
+    columns = c(mean_ld_fctr, mean_seats, mean_air_time)
   ) |>
   tab_spanner(
     label = "Per Month",
@@ -155,7 +158,7 @@ outbound_flight_details |>
   )|>
   tab_style(
     style = cell_text(
-      size = px(13),
+      size = px(14),
       color = "black",
       font = "arial",
       weight = 'bold',
@@ -181,8 +184,10 @@ outbound_flight_details |>
     mean_tot_passengers = 'Passengers',
     mean_tot_departures = 'Departures',
     aircraft_used = 'Aircraft Used') |>
-  tab_options(table.font.size = 13,
-              table.font.names = 'arial') |>
+  tab_options(table.font.size = 14,
+              table.font.names = 'arial',
+              heading.title.font.size = 16,
+              heading.subtitle.font.size = 15) |>
   tab_header(
     title = md(glue("**{year_var} Omaha Eppley Airfield Passenger Stats**")),
     subtitle = md(glue("Outbound passenger stats by airline and destination YE {year_var}, sorted by passengers per month"))
@@ -195,26 +200,17 @@ outbound_flight_details |>
       style = "solid"
     ),
     locations = cells_body(columns = everything())
-  ) %>%
-  tab_style(
-    style = cell_borders(
-      sides = c("left"),
-      color = "gray80",
-      weight = px(2),
-      style = "solid"
-    ),
-    locations = cells_body(columns = c(mean_tot_seats, mean_seats, aircraft_used))
-  ) %>%
+  ) |>
   data_color(
-    columns = vars(mean_tot_seats, mean_tot_passengers, mean_tot_departures),
+    columns = vars(mean_tot_seats, mean_tot_passengers),
     colors = scales::col_numeric(
       # custom defined values - notice that order matters!
       palette = (c('#f1eef6', '#d0d1e6', '#a6bddb', '#74a9cf', '#2b8cbe', '#045a8d')),
       domain = NULL
     )
-  )  %>%
+  )  |>
   data_color(
-    columns = vars(mean_seats,mean_air_time,mean_ld_fctr),
+    columns = vars(mean_ld_fctr),
     colors = scales::col_numeric(
       # custom defined values - notice that order matters!
       palette = (c('#fef0d9', '#fdd49e', '#fdbb84', '#fc8d59', '#e34a33', '#b30000')),
@@ -224,4 +220,40 @@ outbound_flight_details |>
   cols_align(
     align = c("center"),
     columns = c(mean_seats, mean_ld_fctr, mean_air_time, mean_tot_seats, mean_tot_passengers, mean_tot_departures)
-  )
+  )  |> # Adjust title font
+  tab_style(
+    style = list(
+      cell_text(
+        align = "left",
+        weight = 'bold',
+      )
+    ),
+    locations = list(
+      cells_title(groups = c("title"))
+    )
+  ) |>
+  # Adjust title font
+  tab_style(
+    style = list(
+      cell_text(
+        align = "left",
+      )
+    ),
+    locations = list(
+      cells_title(groups = c("subtitle"))
+    )
+  ) |>
+  tab_source_note(
+    source_note = md("Table by Alex Elfering; Source: Bureau of Transportation Statistics T-100 Domestic Segment; Note: Displays mainline airline flight stats")
+  ) |>
+  tab_style(
+    style = cell_borders(
+      sides = c("left"),
+      color = "gray80",
+      weight = px(3),
+      style = "solid"
+    ),
+    locations = cells_body(columns = c(mean_tot_seats, mean_ld_fctr, aircraft_used))
+  ) 
+
+gtsave(oma_tabl, filename = "tab_12.png", inline_css = TRUE)
