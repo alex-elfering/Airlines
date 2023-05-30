@@ -107,7 +107,7 @@ plus_percent <- function(.x) {
   glue::glue("{.x}%")
 }
 
-oma_tabl <- outbound_flight_details |>
+outbound_flight_details |>
   filter(year(flight_month) == year_var) |>
   #filter(dest == 'LNK') |>
   group_by(dest,
@@ -254,6 +254,5 @@ oma_tabl <- outbound_flight_details |>
       style = "solid"
     ),
     locations = cells_body(columns = c(mean_tot_seats, mean_ld_fctr, aircraft_used))
-  ) 
-
-gtsave(oma_tabl, filename = "tab_12.png", inline_css = TRUE)
+  ) |>
+  gtsave("tab_1.png", expand = 10)
