@@ -93,12 +93,20 @@ aircraft_used <- outbound_flight_details |>
 
 stats_overall <- outbound_flight_details |>
   filter(year(flight_month) == year_var) |>
-  #filter(dest == 'LNK') |>
+  #filter(carrier == 'UA',
+  #       dest == 'DEN') |>
   group_by(dest,
-           carrier) |>
+           carrier,
+           flight_month) |>
   summarise(mean_tot_seats = mean(seats),
             mean_tot_passengers = mean(passengers),
             mean_tot_departures = mean(departures_performed)) |>
+  ungroup() |>
+  group_by(dest,
+           carrier) |>
+  summarise(mean_tot_seats = mean(mean_tot_seats),
+            mean_tot_passengers = mean(mean_tot_passengers),
+            mean_tot_departures = mean(mean_tot_departures)) |>
   ungroup()
 
 
@@ -254,5 +262,4 @@ outbound_flight_details |>
       style = "solid"
     ),
     locations = cells_body(columns = c(mean_tot_seats, mean_ld_fctr, aircraft_used))
-  ) |>
-  gtsave("tab_1.png", expand = 10)
+  ) 
