@@ -33,7 +33,7 @@ substrRight <- function(x, n){
 }
 
 # filter on FedEx
-city_var <- 'OMA'
+city_var <- 'LAX'
 
 outbound_flight_details <- intl_df |>
   filter(origin == city_var) |>
@@ -67,7 +67,7 @@ outbound_flight_details <- intl_df |>
   select(-year,
          -month)
 
-year_var <- 1996
+year_var <- 1990
 
 aircraft_used <- outbound_flight_details |>
   filter(year(flight_month) == year_var) |>
@@ -106,7 +106,8 @@ stats_overall <- outbound_flight_details |>
            carrier) |>
   summarise(mean_tot_seats = mean(mean_tot_seats),
             mean_tot_passengers = mean(mean_tot_passengers),
-            mean_tot_departures = mean(mean_tot_departures)) |>
+            mean_tot_departures = mean(mean_tot_departures),
+            months = n_distinct(flight_month)) |>
   ungroup()
 
 
