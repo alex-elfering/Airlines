@@ -110,7 +110,7 @@ final_df |>
              ncol = 5,
              scales = 'free')  +
   labs(title = 'Omaha Eppley Airfield Top Destinations, 1990-2000',
-       subtitle = 'Top 10 destinations, ranked by total seats',
+       subtitle = 'Top 10 destinations by mainline carriers, ranked by total seats',
        caption = 'Visualization by Alex Elfering\nSource: Bureau of Transportation Statistics T-100 Domestic Segment\nNote: Displays mainline airline flight stats') +
   theme(
     plot.title = element_text(face = 'bold', 
@@ -153,4 +153,4 @@ final_df |>
     panel.grid.minor = element_blank(),
     panel.grid.major = ggplot2::element_blank()) 
 
-ggsave(file = glue('C:/Users/alexe/OneDrive/Desktop/oma bump.png'), dpi = 300,  width = 16, height = 9, units = c('in'))
+ggsave(file = glue('C:/Users/alexe/OneDrive/Documents/GitHub/Airlines/Historic OMA Service/oma bump.png'), dpi = 300,  width = 16, height = 9, units = c('in'))
