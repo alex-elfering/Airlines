@@ -88,7 +88,7 @@ origin_dest_service_history <- delta_dest_history |>
                                    service_ends == 1 & service_resumes == 1 ~ 'Service Resumed, then Terminated',
                                    service_ends == 0 & service_resumes == 1 ~ 'Service Resumed',
                                    TRUE ~ 'Service')) |>
-  filter(service_level != 'Service') |>
-  mutate(service_level = factor(service_level, levels = c('Service Established', 'Service Resumed', 'Service Established, then Terminated', 'Service Resumed, then Terminated', 'Service Terminated')))
+  #filter(service_level != 'Service') |>
+  mutate(service_level = factor(service_level, levels = c('Service Established', 'Service Resumed', 'Service', 'Service Established, then Terminated', 'Service Resumed, then Terminated', 'Service Terminated')))
 
 write.csv(origin_dest_service_history,"C:/Users/alexe/OneDrive/Documents/GitHub/Airlines/Delta Air Lines JFK Hub/origin_dest_service_history.csv")
