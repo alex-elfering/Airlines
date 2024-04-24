@@ -5,7 +5,7 @@ account: aelfering
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 11850162
-bundleId: 8537653
+bundleId: 8538190
 url: https://aelfering.shinyapps.io/AirlineHubDestinationsAddedRemoved/
 version: 1
 asMultiple: FALSE

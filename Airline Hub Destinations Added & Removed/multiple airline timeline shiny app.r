@@ -133,7 +133,7 @@ server = shinyServer(function(input, output, session) {
     min_year <- min(final_df$year)
     max_year <- max(final_df$year)
     
-    if(input$airline %in% c('G4','F9','WN','NK')){
+    if(var_code_name %in% c('G4','F9','WN','NK')){
       
       subtitle_statement <- glue('Among the top {total_hubs} cities with the most destinations, between {min_year} and {max_year}')
       caption_statement <- glue('. Because {var_airline_name} does not have "official" hubs, the top cities with the most destinations was pulled.')
@@ -172,7 +172,7 @@ server = shinyServer(function(input, output, session) {
       labs(title = glue('Destinations Added & Terminated by {var_airline_name}'),
            subtitle = subtitle_statement,
            fill = '',
-           caption = glue('Visualization by Alex Elfering\nData Source: T-100 Segment Data from the Bureau of Transportation Statistics\nNote: Only includes mainline operations, data is filtered to remove segments <= 10 flights{caption_statement}')
+           caption = glue('Visualization by Alex Elfering\nData Source: T-100 Segment Data from the Bureau of Transportation Statistics\nNote: Only includes mainline operations, data is filtered to remove segments <= 10 flights{caption_statement} Includes seasonal and year-round routes.')
            ) +
       theme(
         plot.title = element_text(face = 'bold', 
@@ -185,7 +185,7 @@ server = shinyServer(function(input, output, session) {
                                      hjust = 0.5),
         plot.caption = element_text(size = 10,
                                     family = 'Noto Sans',
-                                    hjust = 0),
+                                    hjust = 1),
         axis.title =  ggplot2::element_blank(),
         axis.text.x = element_text(size = 10, 
                                    #face= bold_label,
