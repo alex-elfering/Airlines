@@ -18,7 +18,7 @@ t_100_intl_df <- rbindlist(lapply(t_100_intl, fread)) |> clean_names()
 
 setwd("C:/Users/alexe/OneDrive/Desktop/t-100 dom")
 t_100_dom <- list.files("C:/Users/alexe/OneDrive/Desktop/t-100 dom", pattern = "*.csv")
-t_100_dom_df <- rbindlist(lapply(t_100_intl, fread)) |> clean_names()
+t_100_dom_df <- rbindlist(lapply(t_100_dom, fread)) |> clean_names()
 
 aircraft <- read.csv('C:/Users/alexe/OneDrive/Desktop/L_AIRCRAFT_TYPE.csv') |> clean_names()
 
@@ -126,4 +126,4 @@ origin_dest_service_history <- united_dest_history |>
   select(-city1,
          -city2)
 
-write.csv(origin_dest_service_history,"C:/Users/alexe/OneDrive/Documents/GitHub/Airlines/Historic Airline Hub Service/origin_dest_service_history.csv")
+#write.csv(origin_dest_service_history,"C:/Users/alexe/OneDrive/Documents/GitHub/Airlines/Historic Airline Hub Service/origin_dest_service_history.csv")
