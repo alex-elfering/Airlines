@@ -12,7 +12,7 @@ library(janitor)
 library(shinyWidgets)
 
 # pull data ----
-airline_hub_data <- read.csv('C:/Users/alexe/OneDrive/Documents/Airline Analysis/Multiple Airline Hub Analysis/hub history1.csv')
+airline_hub_data <- read.csv('hub history1.csv')
 
 # airline names
 airline_names <- data.frame(code = c('F9', 
@@ -44,13 +44,24 @@ ui <- fluidPage(
   sidebarLayout(position = "left",
                 sidebarPanel(
                   selectInput("airline", "Airline:",
-                              sort(c('F9', 'AA','UA','DL','B6','WN','G4', 'NK','HA','AS','SY'))),
+                              sort(c('Frontier Airlines',
+                                     'American Airlines',
+                                     'United Airlines',
+                                     'Delta Air Lines',
+                                     'JetBlue',
+                                     'Southwest Airlines',
+                                     'Allegiant Air',
+                                     'Spirit Airlines',
+                                     'Haiwaiian Airlines',
+                                     'Alaska Airlines',
+                                     'Sun Country'))),
                   sliderInput("year", 
                               "Highlight Year:",
                               min = 1990,
                               max = 2022,
                               step = 1,
-                              value = 2015),
+                              value = 2015,
+                              sep = ''),
                   pickerInput("service_level",
                               "Service Level:", 
                               choices= c('Service Established',
@@ -76,9 +87,13 @@ server = shinyServer(function(input, output, session) {
   output$plot <- renderPlot({
     
     filter_airline_name <- airline_names |>
-      filter(code == input$airline)
+      filter(airline == input$airline)
     
     var_airline_name <- filter_airline_name$airline
+    var_code_name <- filter_airline_name$code
+    
+    #var_airline_name <- 'United Airlines'
+    #var_code_name <- 'UA'
     
     airline_origin_order <- airline_hub_data |>
       group_by(carrier) |>
@@ -91,12 +106,12 @@ server = shinyServer(function(input, output, session) {
       ungroup() |>
       arrange(carrier,
               desc(count)) |>
-      filter(carrier == input$airline)
+      filter(carrier == var_code_name)
     
     airports <- airline_origin_order$origin
     
     final_df <- airline_hub_data |>
-      filter(carrier == input$airline) |>
+      filter(carrier == var_code_name) |>
       filter(year <= 2022) |>
       mutate(origin = factor(origin, levels = airports),
              service_level = factor(service_level, 
@@ -111,8 +126,8 @@ server = shinyServer(function(input, output, session) {
                service_level) |>
       summarise(n = n_distinct(dest)) |>
       ungroup() |>
-      mutate(n = ifelse(grepl('Terminate', service_level), n*-1,n)) |>
-      filter(service_level %in% input$service_level)
+      mutate(n = ifelse(grepl('Terminate', service_level), n*-1,n)) #|>
+      #filter(service_level %in% input$service_level)
     
     total_hubs <- n_distinct(final_df$origin)
     min_year <- min(final_df$year)
@@ -134,24 +149,26 @@ server = shinyServer(function(input, output, session) {
       ggplot(aes(x = year,
                  y = n,
                  fill = service_level)) + 
-      #geom_rect(mapping = aes(xmin=input$year-0.5,xmax=input$year+0.5),
-      #          ymin=-Inf,ymax=Inf, colour="white",fill='gray93', size=0.5, alpha=0.9) +
       geom_bar(width = 1,
                stat = 'identity',
                position = 'stack') +
       geom_vline(xintercept = input$year,
-                 linetype = 'dashed') +
+                 linetype = 'dashed',
+                 size = 1) +
       facet_wrap(~origin,
-                 ncol = 5) +
+                 ncol = 5,
+                 scales = 'free_x') +
       scale_fill_manual(values = c('Service Established' = '#2166ac',
                                    'Service Resumed' = '#67a9cf',
-                                   'Service' = 'gray90',
+                                   'Service' = 'gray80',
                                    'Service Terminated' = '#b2182b',
                                    'Service Established, then Terminated' = '#ef8a62',
                                    'Service Resumed, then Terminated' = '#fddbc7'))+
       geom_hline(yintercept = 0,
                  linetype = 'dotted') +
       guides(fill = guide_legend(nrow = 2)) +
+      scale_x_continuous(limits=c(min_year,max_year),
+                         breaks = seq(min_year, max_year, by = 5)) +
       labs(title = glue('Destinations Added & Terminated by {var_airline_name}'),
            subtitle = subtitle_statement,
            fill = '',
@@ -197,9 +214,12 @@ server = shinyServer(function(input, output, session) {
         panel.background = ggplot2::element_blank(),
         panel.grid.minor = element_blank(),
         panel.grid.major = ggplot2::element_blank(),
+        panel.grid.major.y = element_line(color = "gray70",
+                                          size = 0.5,
+                                          linetype = 2),
         #panel.border = element_rect(color = "gray90", fill = NA, size = 0.5)
         ) +
-      annotate("segment",x=Inf,xend=-Inf,y=Inf,yend=Inf,color="gray80",lwd=1)
+      annotate("segment",x=Inf,xend=-Inf,y=Inf,yend=Inf,color="gray60",lwd=1.5)
     
   }, height = 850,width = 1500)
   

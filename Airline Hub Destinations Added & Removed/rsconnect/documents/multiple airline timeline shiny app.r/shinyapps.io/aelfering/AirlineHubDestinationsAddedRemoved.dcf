@@ -1,0 +1,12 @@
+name: AirlineHubDestinationsAddedRemoved
+title: AirlineHubDestinationsAddedRemoved
+username: aelfering
+account: aelfering
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 11850162
+bundleId: 8537653
+url: https://aelfering.shinyapps.io/AirlineHubDestinationsAddedRemoved/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
