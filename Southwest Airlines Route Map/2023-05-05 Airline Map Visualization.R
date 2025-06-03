@@ -2,22 +2,11 @@
 # top flights based on total flights each way (OMA-MDW & MDW-OMA)
 
 library(tidyverse)
+library(janitor)
 library(data.table)
-library(ggplot2)
-library(lubridate)
-library(sysfonts)
-library(ggtext)
-library(showtext)
+library(hms)
 library(airportr)
-library(stringr)
-library(glue)
-
-library(albersusa)
-library(sp)
-library(raster)
-library(ggplot2)
-library(broom)
-library(ggrepel)
+library(lubridate)
 
 
 options("device" = "windows")

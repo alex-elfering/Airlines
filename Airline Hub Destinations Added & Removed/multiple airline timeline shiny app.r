@@ -25,7 +25,11 @@ airline_names <- data.frame(code = c('F9',
                                      'NK',
                                      'HA',
                                      'AS',
-                                     'SY'),
+                                     'SY',
+                                     'NW',
+                                     'US',
+                                     'CO',
+                                     'VX'),
                             airline = c('Frontier Airlines',
                                         'American Airlines',
                                         'United Airlines',
@@ -36,7 +40,11 @@ airline_names <- data.frame(code = c('F9',
                                         'Spirit Airlines',
                                         'Haiwaiian Airlines',
                                         'Alaska Airlines',
-                                        'Sun Country'))
+                                        'Sun Country',
+                                        'Continental Airlines',
+                                        'Northwest Airlines',
+                                        'US Airways',
+                                        'Virgin America'))
 
 
 
@@ -54,7 +62,11 @@ ui <- fluidPage(
                                      'Spirit Airlines',
                                      'Haiwaiian Airlines',
                                      'Alaska Airlines',
-                                     'Sun Country'))),
+                                     'Sun Country',
+                                     'Continental Airlines',
+                                     'Northwest Airlines',
+                                     'US Airways',
+                                     'Virgin America'))),
                   sliderInput("year", 
                               "Highlight Year:",
                               min = 1990,
@@ -92,8 +104,8 @@ server = shinyServer(function(input, output, session) {
     var_airline_name <- filter_airline_name$airline
     var_code_name <- filter_airline_name$code
     
-    #var_airline_name <- 'United Airlines'
-    #var_code_name <- 'UA'
+    #var_airline_name <- 'Northwest Airlines'
+    #var_code_name <- 'NW'
     
     airline_origin_order <- airline_hub_data |>
       group_by(carrier) |>
@@ -152,9 +164,9 @@ server = shinyServer(function(input, output, session) {
       geom_bar(width = 1,
                stat = 'identity',
                position = 'stack') +
-      geom_vline(xintercept = input$year,
-                 linetype = 'dashed',
-                 size = 1) +
+      #geom_vline(xintercept = input$year,
+      #           linetype = 'dashed',
+      #           size = 1) +
       facet_wrap(~origin,
                  ncol = 5,
                  scales = 'free_x') +
