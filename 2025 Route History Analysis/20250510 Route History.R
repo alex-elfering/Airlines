@@ -81,7 +81,7 @@ excluded_desc <- c(
   "Fairchild-Hiller FH-227"
 )
 
-# functions ----
+#### functions ----
 read_t100 <- function(path) {
   # Reads all CSVs in a folder and combines them into one dataset
   # Assumes the files are T-100 format (domestic or international)
@@ -159,7 +159,7 @@ service_history <- function(df) {
     ) |>
     ungroup()
 }
-# execute ----
+#### execute ----
 domestic_sum  <- read_t100(DOM_PATH) |> summarise_t100() |> mutate(international_service = 0)
 international_sum <- read_t100(INTL_PATH) |> summarise_t100() |> mutate(international_service = 1)
 
