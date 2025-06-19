@@ -1,7 +1,11 @@
 # what international routes to Europe and Asia did American fly in the 90s, but not as of 2023?
 
-#source('~/GitHub/Airlines/2025 Route History Analysis/20250510 Route History.R')
+#   ---- data loading  ----
 
+if (!exists("history") || !is.data.frame(history)) {
+  source("~/GitHub/Airlines/2025 Route History Analysis/20250510 Route History.R")
+}
+  
 library(sf)
 library(rnaturalearth)
 library(tidyverse)
@@ -9,12 +13,31 @@ library(ggrepel)
 library(janitor)
 library(glue)
 
+#   ---- variables ----
 set.seed(123)
 
 airline_var <- 'AA'
 aa_hubs <- c('JFK','DFW','LAX','ORD','RDU','BNA','MIA','BOS','SJC','SJU')
+laea_proj <- "+proj=laea +lat_0=55 +lon_0=30 +datum=WGS84 +units=m +no_defs"
 
-# international routes flown in the 90s
+# ---- functions ----
+
+make_arch_curve <- function(p1, p2, arc_height = 0.3, direction = 1, n = 100) {
+  mx <- (p1[1] + p2[1]) / 2
+  my <- (p1[2] + p2[2]) / 2
+  dx <- p2[1] - p1[1]
+  dy <- p2[2] - p1[2]
+  perp <- c(-dy, dx)
+  norm <- sqrt(sum(perp^2))
+  if (norm == 0) norm <- 1
+  perp <- perp / norm
+  control <- c(mx, my) + direction * arc_height * perp * sqrt(dx^2 + dy^2)
+  bez_coords <- bezier::bezier(t = seq(0, 1, length.out = n), 
+                               p = rbind(p1, control, p2))
+  return(bez_coords)
+}
+
+# ---- 1990s & 2024 International Routes  ----
 flights_90s <- history |>
   filter(carrier %in% c(airline_var),
          year <= 2000,
@@ -46,7 +69,6 @@ flights_23 <- history |>
   left_join(airportr::airports, by = c("dest" = "IATA")) |>
   rename(dest_lat = Latitude, dest_lon = Longitude) |>
   clean_names() |>
-  #filter((grepl('Asia',timezone_y) | grepl('Europe',timezone_y))) |>
   select(carrier,
          origin,
          dest) |>
@@ -55,9 +77,9 @@ flights_23 <- history |>
 flights_from_90s <- flights_90s |>
   anti_join(flights_23)
 
+# service streaks for exploratory analysis
 history |>
   filter(carrier %in% c(airline_var),
-         #year <= 2000,
          international_service == 1,
          seats > 0) |>
   left_join(airportr::airports, by = c("origin" = "IATA")) |>
@@ -65,7 +87,6 @@ history |>
   left_join(airportr::airports, by = c("dest" = "IATA")) |>
   rename(dest_lat = Latitude, dest_lon = Longitude) |>
   clean_names() |>
-  #filter(grepl('Asia',timezone_y) | grepl('Europe',timezone_y)) |>
   anti_join(flights_23) |>
   inner_join(flights_90s) |>
   select(carrier,
@@ -96,54 +117,21 @@ history |>
   arrange(desc(last_year),origin) |>
   as.data.frame()
 
-# Define LAEA projection centered on the Americas
-laea_proj <- "+proj=laea +lat_0=55 +lon_0=30 +datum=WGS84 +units=m +no_defs"
+# ----  prepare map ----
 
-# Load and reproject world data
 world <- ne_countries(scale = "medium", returnclass = "sf") |>
   st_transform(laea_proj)
-
-# Bounding box in projected coordinates (meters)
-bbox <- st_bbox(c(
-  xmin = -15500000,   
-  xmax = 15500000,   
-  ymin = -5000000,   
-  ymax = 10000000     
-), crs = laea_proj)
+bbox <- st_bbox(c(xmin = -15500000,xmax = 15500000,ymin = -5000000,ymax = 10000000), crs = laea_proj)
 world_crop <- st_crop(world, bbox)
 
-make_arch_curve <- function(p1, p2, arc_height = 0.3, direction = 1, n = 100) {
-  # Midpoint
-  mx <- (p1[1] + p2[1]) / 2
-  my <- (p1[2] + p2[2]) / 2
-  
-  # Perpendicular vector for arch
-  dx <- p2[1] - p1[1]
-  dy <- p2[2] - p1[2]
-  perp <- c(-dy, dx)
-  norm <- sqrt(sum(perp^2))
-  if (norm == 0) norm <- 1
-  perp <- perp / norm
-  
-  # Apply direction (1 = up, -1 = down)
-  control <- c(mx, my) + direction * arc_height * perp * sqrt(dx^2 + dy^2)
-  
-  # Generate Bezier curve
-  bez_coords <- bezier::bezier(t = seq(0, 1, length.out = n), 
-                               p = rbind(p1, control, p2))
-  return(bez_coords)
-}
-
+# ----  map routes and objects  ----
 routes <- flights_from_90s |>
   select(origin, dest, origin_lon, origin_lat, dest_lon, dest_lat) |>
   pmap_dfr(function(origin, dest, origin_lon, origin_lat, dest_lon, dest_lat) {
     p1 <- st_transform(st_sfc(st_point(c(origin_lon, origin_lat)), crs = 4326), laea_proj) |> st_coordinates()
     p2 <- st_transform(st_sfc(st_point(c(dest_lon, dest_lat)), crs = 4326), laea_proj) |> st_coordinates()
     
-    # Flip up/down based on longitudes
-    direction <- sample(c(-1, 1), 1)
-    
-    coords <- make_arch_curve(p1, p2, arc_height = 0.43, direction = direction)
+    coords <- make_arch_curve(p1, p2, arc_height = 0.43, direction = sample(c(-1, 1), 1))
     
     st_linestring(coords) |>
       st_sfc(crs = laea_proj) |>
@@ -157,9 +145,10 @@ city_points <- flights_from_90s |>
   ) |>
   distinct() 
 
-# Convert to sf points
 cities_sf <- st_as_sf(city_points, coords = c("lon", "lat"), crs = 4326) |>
   st_transform(laea_proj)
+
+# ----  airport label dataframe ----
 
 cities_label_df <- cities_sf |>
   mutate(
@@ -175,6 +164,7 @@ cities_label_df <- cities_sf |>
          x,
          y,
          City) |>
+  # airport market labeling fixes
   mutate(City = case_when(city == 'NRT' ~ 'Tokyo-Narita',
                           city == 'LGW' ~ 'London-Gatwick',
                           city == 'LHR' ~ 'London-Heathrow',
@@ -220,6 +210,8 @@ cities_label_df <- cities_sf |>
     label_size = ifelse(is_hub, 2.5, 2)
   ) 
 
+# ----  final map projection  ----
+
 ggplot() +
   geom_sf(data = world_crop, fill = "gray85", color = "white", size = 12) +
   geom_sf(data = routes, size = 0.005, alpha = 0.2, color = '#bd0026') +
@@ -232,8 +224,6 @@ ggplot() +
         fontface = label_fontface,
         color = label_color,
         size = label_size),
-    #size = 2,
-    #fontface = "bold",
     box.padding = 0.3,
     point.padding = 0.1,
     max.overlaps = Inf,
@@ -258,4 +248,7 @@ ggplot() +
                                 color = 'gray50'),
   ) 
 
-ggsave(file = glue('~/GitHub/Airlines/20250614 American Airlines Historical International Routes/historic route map {airline_var} whole map.png'), width = 15, height = 10, dpi = 350, units = "in")
+ggsave(
+  file = glue('~/GitHub/Airlines/20250614 American Airlines Historical International Routes/historic route map {airline_var} whole map.png'), 
+  width = 15, height = 10, dpi = 350, units = "in"
+  )
