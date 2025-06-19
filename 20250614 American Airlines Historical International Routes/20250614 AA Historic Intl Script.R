@@ -8,9 +8,11 @@ library(tidyverse)
 library(ggrepel)
 library(janitor)
 
+# variables and data-loading
 set.seed(123)
-
 airline_var <- 'AA'
+# includes former hubs/'significant' cities - does not highlight US Airways-inherited hubs (no CLT, DCA, PHL, PHX) nor TWA-inherited hubs (STL)
+aa_hubs <- c('JFK','DFW','LAX','ORD','RDU','BNA','MIA','BOS','SJC')
 
 # international routes flown in the 90s
 flights_90s <- history |>
@@ -53,9 +55,9 @@ flights_23 <- history |>
 flights_from_90s <- flights_90s |>
   anti_join(flights_23)
 
+# exploring history of 90s routes out of curiosity
 history |>
   filter(carrier %in% c(airline_var),
-         #year <= 2000,
          international_service == 1,
          seats > 0) |>
   left_join(airportr::airports, by = c("origin" = "IATA")) |>
@@ -95,14 +97,12 @@ history |>
   as.data.frame()
   
 
-# Define LAEA projection centered on the Americas
+# map projection and special route arches
 laea_proj <- "+proj=laea +lat_0=55 +lon_0=30 +datum=WGS84 +units=m +no_defs"
 
-# Load and reproject world data
 world <- ne_countries(scale = "medium", returnclass = "sf") |>
   st_transform(laea_proj)
 
-# Bounding box in projected coordinates (meters)
 bbox <- st_bbox(c(
   xmin = -7300000,   
   xmax = 7500000,   
@@ -194,7 +194,14 @@ cities_label_df <- cities_sf |>
                           city == 'FCO' ~ 'Rome-Fiumicino',
                           city == 'RDU' ~ 'Raleigh-Durdam',
                           city == 'NGO' ~ 'Nagoya-Centrair',
-                          TRUE ~ City))
+                          city == 'SHA' ~ 'Shanghai-Hongqiao',
+                          TRUE ~ City)) |>
+  mutate(
+    is_hub = city %in% aa_hubs,
+    label_color = ifelse(is_hub, "black", "black"),
+    label_fontface = ifelse(is_hub, "bold", "plain"),
+    label_size = ifelse(is_hub, 2.5, 2)
+  )
 
 ggplot() +
   geom_sf(data = world_crop, fill = "gray85", color = "white", size = 12) +
@@ -204,15 +211,20 @@ ggplot() +
   coord_sf(crs = laea_proj, expand = FALSE) +
   geom_text_repel(
     data = cities_label_df,
-    aes(x = x, y = y, label = City),
-    size = 2,
-    fontface = "bold",
+    aes(x = x, y = y, label = City,
+        fontface = label_fontface,
+        color = label_color,
+        size = label_size),
+    #size = 2,
+    #fontface = "bold",
     box.padding = 0.3,
     point.padding = 0.1,
     max.overlaps = Inf,
     segment.color = "black",
     segment.size = 0.1
   ) +
+  scale_color_identity() +
+  scale_size_identity() +
   labs(title = "Discontinued European and Asian Routes by American Airlines",
        subtitle = 'International nonstop routes flown throughout the 1990s but absent by 2023',
        caption = 'Code by Alex Elfering | Source: Bureau of Transportation Statistics T-100 International Segment Data') +

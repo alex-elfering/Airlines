@@ -11,7 +11,8 @@ library(glue)
 
 set.seed(123)
 
-airline_var <- 'DL'
+airline_var <- 'AA'
+aa_hubs <- c('JFK','DFW','LAX','ORD','RDU','BNA','MIA','BOS','SJC','SJU')
 
 # international routes flown in the 90s
 flights_90s <- history |>
@@ -21,7 +22,7 @@ flights_90s <- history |>
          seats > 0) |>
   left_join(airportr::airports, by = c("origin" = "IATA")) |>
   rename(origin_lat = Latitude, origin_lon = Longitude) |>
-  filter(Country == 'United States') |>
+  filter(Country %in% c('United States','Puerto Rico')) |>
   left_join(airportr::airports, by = c("dest" = "IATA")) |>
   rename(dest_lat = Latitude, dest_lon = Longitude) |>
   clean_names() |>
@@ -197,7 +198,18 @@ cities_label_df <- cities_sf |>
                           city == 'BGI' ~ 'Barbados',
                           city == 'AUA' ~ 'Aruba',
                           city == 'SXM' ~ 'Sint Maarten',
-                          TRUE ~ City))
+                          city == 'UVF' ~ 'St. Lucia-Hewanorra',
+                          city == 'GND' ~ 'Grenada',
+                          city == 'POS' ~ 'Port of Spain',
+                          city == 'CUR' ~ 'Curaçao',
+                          city == 'SEA' ~ 'Seattle-Tacoma',
+                          TRUE ~ City)) |>
+  mutate(
+    is_hub = city %in% aa_hubs,
+    label_color = ifelse(is_hub, "black", "black"),
+    label_fontface = ifelse(is_hub, "bold", "plain"),
+    label_size = ifelse(is_hub, 2.5, 2)
+  )
 
 ggplot() +
   geom_sf(data = world_crop, fill = "gray85", color = "white", size = 12) +
@@ -207,16 +219,21 @@ ggplot() +
   coord_sf(crs = laea_proj, expand = FALSE) +
   geom_text_repel(
     data = cities_label_df,
-    aes(x = x, y = y, label = City),
-    size = 2,
-    fontface = "bold",
+    aes(x = x, y = y, label = City,
+        fontface = label_fontface,
+        color = label_color,
+        size = label_size),
+    #size = 2,
+    #fontface = "bold",
     box.padding = 0.3,
     point.padding = 0.1,
     max.overlaps = Inf,
     segment.color = "black",
     segment.size = 0.1
   ) +
-  labs(title = "Discontinued International Routes by Delta Air Lines",
+  scale_color_identity() +
+  scale_size_identity() +
+  labs(title = "Discontinued International Routes by American Airlines",
        subtitle = 'International nonstop routes flown throughout the 1990s but absent by 2024',
        caption = 'Code by Alex Elfering | Source: Bureau of Transportation Statistics T-100 International Segment Data') +
   theme_void() +
