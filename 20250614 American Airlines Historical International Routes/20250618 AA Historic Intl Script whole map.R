@@ -181,7 +181,7 @@ cities_label_df <- cities_sf |>
                           city == 'STN' ~ 'London-Stansted',
                           city == 'ORD' ~ "Chicago-O'Hare",
                           city == 'ORY' ~ 'Paris-Orly',
-                          city == 'CDG' ~ 'Paris-de Gaulle',
+                          city == 'CDG' ~ 'Paris-Charles de Gaulle',
                           city == 'KIX' ~ 'Osaka-Kansai',
                           city == 'SVO' ~ 'Moscow-Sheremetyevo',
                           city == 'LGA' ~ 'New York-LaGuardia',
@@ -193,7 +193,7 @@ cities_label_df <- cities_sf |>
                           city == 'PEK' ~ 'Beijing-Capital',
                           city == 'PVG' ~ 'Shanghai-Pudong',
                           city == 'FCO' ~ 'Rome-Fiumicino',
-                          city == 'RDU' ~ 'Raleigh-Durdam',
+                          city == 'RDU' ~ 'Raleigh-Durham',
                           city == 'NGO' ~ 'Nagoya-Centrair',
                           city == 'BGI' ~ 'Barbados',
                           city == 'AUA' ~ 'Aruba',
@@ -203,13 +203,22 @@ cities_label_df <- cities_sf |>
                           city == 'POS' ~ 'Port of Spain',
                           city == 'CUR' ~ 'Curaçao',
                           city == 'SEA' ~ 'Seattle-Tacoma',
-                          TRUE ~ City)) |>
+                          city == 'PAP' ~ 'Port-au-Prince',
+                          city == 'CUN' ~ 'Cancún',
+                          city == 'GRU' ~ 'São Paulo',
+                          city == 'BOG' ~ 'Bogotá',
+                          city == 'SJO' ~ 'San José (CR)',
+                          city == 'DUS' ~ 'Düsseldorf',
+                          city == 'FRA' ~ 'Frankfurt am Main',
+                          city == 'BHX' ~ 'Birmingham (UK)',
+                          TRUE ~ City),
+         city_airport = paste(city,City,sep='/')) |>
   mutate(
     is_hub = city %in% aa_hubs,
     label_color = ifelse(is_hub, "black", "black"),
     label_fontface = ifelse(is_hub, "bold", "plain"),
     label_size = ifelse(is_hub, 2.5, 2)
-  )
+  ) 
 
 ggplot() +
   geom_sf(data = world_crop, fill = "gray85", color = "white", size = 12) +
