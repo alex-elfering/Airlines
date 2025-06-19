@@ -204,8 +204,7 @@ cities_label_df <- cities_sf |>
                           city == 'YYZ' ~ 'Toronto-Pearson',
                           city == 'ZUR' ~ 'Zürich',
                           city == 'YUL' ~ 'Montréal-Trudeau',
-                          city == 'PTY' ~ 'Ciudad de Panamá',
-                          city == 'MEX' ~ 'Ciudad de México',
+                          city == 'PTY' ~ 'Panama City-Tocumen',
                           TRUE ~ City),
          city_airport = paste(city,City,sep='/')) |>
   mutate(
