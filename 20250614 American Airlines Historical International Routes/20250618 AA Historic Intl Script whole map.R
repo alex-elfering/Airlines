@@ -165,14 +165,14 @@ cities_label_df <- cities_sf |>
          y,
          City) |>
   # airport market labeling fixes
-  mutate(City = case_when(city == 'NRT' ~ 'Tokyo-Narita',
+  mutate(City = case_when(city == 'NRT' ~ 'Tōkyō-Narita',
                           city == 'LGW' ~ 'London-Gatwick',
                           city == 'LHR' ~ 'London-Heathrow',
                           city == 'STN' ~ 'London-Stansted',
                           city == 'ORD' ~ "Chicago-O'Hare",
                           city == 'ORY' ~ 'Paris-Orly',
                           city == 'CDG' ~ 'Paris-Charles de Gaulle',
-                          city == 'KIX' ~ 'Osaka-Kansai',
+                          city == 'KIX' ~ 'Ōsaka-Kansai',
                           city == 'SVO' ~ 'Moscow-Sheremetyevo',
                           city == 'LGA' ~ 'New York-LaGuardia',
                           city == 'JFK' ~ 'New York-JFK',
@@ -188,7 +188,7 @@ cities_label_df <- cities_sf |>
                           city == 'BGI' ~ 'Barbados',
                           city == 'AUA' ~ 'Aruba',
                           city == 'SXM' ~ 'Sint Maarten',
-                          city == 'UVF' ~ 'St. Lucia-Hewanorra',
+                          city == 'UVF' ~ 'Saint Lucia-Hewanorra',
                           city == 'GND' ~ 'Grenada',
                           city == 'POS' ~ 'Port of Spain',
                           city == 'CUR' ~ 'Curaçao',
@@ -202,6 +202,10 @@ cities_label_df <- cities_sf |>
                           city == 'FRA' ~ 'Frankfurt am Main',
                           city == 'BHX' ~ 'Birmingham',
                           city == 'YYZ' ~ 'Toronto-Pearson',
+                          city == 'ZUR' ~ 'Zürich',
+                          city == 'YUL' ~ 'Montréal-Trudeau',
+                          city == 'PTY' ~ 'Ciudad de Panamá',
+                          city == 'MEX' ~ 'Ciudad de México',
                           TRUE ~ City),
          city_airport = paste(city,City,sep='/')) |>
   mutate(
