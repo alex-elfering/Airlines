@@ -165,7 +165,7 @@ cities_label_df <- cities_sf |>
          y,
          City) |>
   # airport market labeling fixes
-  mutate(City = case_when(city == 'NRT' ~ 'Tōkyō-Narita',
+  mutate(City = case_when(city == 'NRT' ~ 'Tokyo-Narita',
                           city == 'LGW' ~ 'London-Gatwick',
                           city == 'LHR' ~ 'London-Heathrow',
                           city == 'STN' ~ 'London-Stansted',
