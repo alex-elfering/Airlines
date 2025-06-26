@@ -238,7 +238,7 @@ ggplot() +
   scale_size_identity() +
   labs(title = "Discontinued International Routes by American Airlines",
        subtitle = 'International nonstop routes flown throughout the 1990s but absent by 2024',
-       caption = 'Code by Alex Elfering | Source: Bureau of Transportation Statistics T-100 International Segment Data') +
+       caption = "Code by Alex Elfering | Source: Bureau of Transportation Statistics T-100 International Segment Data\nNote: Only shows routes operated by American Airlines' mainline fleet; Does not show fifth-freedom routes operated outside the United States.") +
   theme_void() +
   theme(
     panel.background = element_rect(fill = "white", color = NA),
