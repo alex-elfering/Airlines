@@ -11,11 +11,11 @@ library(tidyverse)
 library(lubridate)
 
 # ----  variables and custom dataframes ----
-main_airport <- 'OMA'
+main_airport <- 'DSM'
 
 base_path <- "C:/Users/alexe/OneDrive/Documents/Airline Analysis/Schedule Data"
 years_to_include <- c("2025")
-target_airports <- c("OMA")
+target_airports <- c("DSM")
 
 year_pattern <- paste0("/", years_to_include, "/") |> paste(collapse = "|")
 all_files <- list.files(path = base_path, pattern = "\\.csv$", recursive = TRUE, full.names = TRUE)
@@ -58,11 +58,6 @@ airline_hubs <- data.frame(
   )
 
 # ----  functions ----
-
-#format_time <- function(x) {
-#  x <- suppressWarnings(as.integer(x))
-#  ifelse(is.na(x), NA_character_, sprintf("%02d:%02d", x %/% 100, x %% 100))
-#}
 
 assign_airline_groups <- function(df) {
   df |>
